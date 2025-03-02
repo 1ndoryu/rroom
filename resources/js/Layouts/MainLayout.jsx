@@ -7,9 +7,8 @@ import { Head } from '@inertiajs/react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/Components/ui/avatar';
 
 function AuthNavbar({ user }) {
-    // Usamos optional chaining Y un valor por defecto para username.
-    const username = user?.username || ''; // Valor por defecto: cadena vacía.
-    const initials = username.substring(0, 2).toUpperCase();
+    const userName = user?.name || ''; // Cambia 'username' por 'name'.
+    const initials = userName.substring(0, 2).toUpperCase();
 
 
     return (
@@ -37,8 +36,8 @@ function AuthNavbar({ user }) {
                     </div>
                     <div className="flex items-center">
                         <Avatar>
-                            {/* Aseguramos user y user.avatar antes de acceder a la propiedad */}
-                            <AvatarImage src={user?.avatar || ''} alt={username} />
+                            {/*  'name' en lugar de 'username' */}
+                            <AvatarImage src={user?.avatar || ''} alt={userName} />
                             <AvatarFallback>{initials}</AvatarFallback>
                         </Avatar>
                     </div>
