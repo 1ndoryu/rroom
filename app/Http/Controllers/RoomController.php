@@ -17,8 +17,8 @@ class RoomController extends Controller
     {
         Log::info('RoomController:index - Iniciando la función index.');
 
-        $rooms = Room::with(['user', 'images'])->latest()->get(); 
-        
+        $rooms = Room::with(['user', 'images'])->latest()->get();
+
         $roomsData = $rooms->map(function ($room) {
             return [
                 'id' => $room->id,
@@ -76,69 +76,82 @@ class RoomController extends Controller
     }
 
     public function store(Request $request)
-{
-    Log::info('RoomController:store - Iniciando el proceso de creación de habitación.');
+    {
+        Log::info('RoomController:store - Iniciando el proceso de creación de habitación.');
 
-    $validatedData = $request->validate([
-        'address' => 'required|string',
-        'hide_address' => 'required|boolean',
-        'property_type' => 'required|string',
-        'rent' => 'required|integer',
-        'bills_included' => 'required|boolean',
-        'security_deposit' => 'required|integer',
-        'available_on' => 'required|date',
-        'preferred_gender' => 'required|string',
-        'bathroom_type' => 'required|string',
-        'parking' => 'required|boolean',
-        'internet_access' => 'required|boolean',
-        'private_room' => 'required|boolean',
-        'furnished' => 'required|boolean',
-        'accessible' => 'required|boolean',
-        'lgbt_friendly' => 'required|boolean',
-        'cannabis_friendly' => 'required|boolean',
-        'cat_friendly' => 'required|boolean',
-        'dog_friendly' => 'required|boolean',
-        'children_friendly' => 'required|boolean',
-        'student_friendly' => 'required|boolean',
-        'senior_friendly' => 'required|boolean',
-        'requires_background_check' => 'required|boolean',
-        'description' => 'required|string',
-        'roomies_description' => 'required|string',
-        'bedrooms' => 'required|integer',
-        'bathrooms' => 'required|integer',
-        'roomies' => 'required|integer',
-        'minimum_stay' => 'required|integer',
-        'maximum_stay' => 'required|integer',
-        'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-    ]);
+        $validatedData = $request->validate([
+            'address' => 'required|string',
+            'hide_address' => 'required|boolean',
+            'property_type' => 'required|string',
+            'rent' => 'required|integer',
+            'bills_included' => 'required|boolean',
+            'security_deposit' => 'required|integer',
+            'available_on' => 'required|date',
+            'preferred_gender' => 'required|string',
+            'bathroom_type' => 'required|string',
+            'parking' => 'required|boolean',
+            'internet_access' => 'required|boolean',
+            'private_room' => 'required|boolean',
+            'furnished' => 'required|boolean',
+            'accessible' => 'required|boolean',
+            'lgbt_friendly' => 'required|boolean',
+            'cannabis_friendly' => 'required|boolean',
+            'cat_friendly' => 'required|boolean',
+            'dog_friendly' => 'required|boolean',
+            'children_friendly' => 'required|boolean',
+            'student_friendly' => 'required|boolean',
+            'senior_friendly' => 'required|boolean',
+            'requires_background_check' => 'required|boolean',
+            'description' => 'required|string',
+            'roomies_description' => 'required|string',
+            'bedrooms' => 'required|integer',
+            'bathrooms' => 'required|integer',
+            'roomies' => 'required|integer',
+            'minimum_stay' => 'required|integer',
+            'maximum_stay' => 'required|integer',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-    Log::info('RoomController:store - Datos validados exitosamente.');
+        Log::info('RoomController:store - Datos validados exitosamente.');
 
-    $user = Auth::user();
-    Log::info("RoomController:store - Usuario autenticado: {$user->name} ({$user->id})");
-    $validatedData['user_id'] = $user->id;
+        $user = Auth::user();
+        Log::info("RoomController:store - Usuario autenticado: {$user->name} ({$user->id})");
+        $validatedData['user_id'] = $user->id;
 
-     // Crea la habitación *primero* (sin las imágenes)
-    $room = Room::create($validatedData);
-    Log::info("RoomController:store - Habitación creada con ID: {$room->id}");
+        // Crea la habitación *primero* (sin las imágenes)
+        $room = Room::create($validatedData);
+        Log::info("RoomController:store - Habitación creada con ID: {$room->id}");
 
 
-    if ($request->hasFile('images')) {
-        Log::info('RoomController:store - Procesando imágenes.');
-        foreach ($request->file('images') as $image) {
-            $path = $image->store('room_images', 'public'); //  Guarda en storage/app/public/room_images
-            Log::info("RoomController:store - Imagen guardada en: $path");
+        if ($request->hasFile('images')) {
+            Log::info('RoomController:store - Se encontraron archivos de imágenes en la solicitud.');
+            $files = $request->file('images');
+            $images = is_array($files) ? $files : [$files]; // Ensure $images is always an array
 
-            // Crea un registro en la tabla `images` para cada imagen
-            $room->images()->create([
-                'url' => Storage::url($path), //  Obtiene la URL pública, // Usa Storage::url para URLs relativas al almacenamiento
-            ]);
-            Log::info("RoomController:store - Imagen asociada a la habitación {$room->id}");
+            Log::info('RoomController:store - Cantidad de imágenes recibidas:', ['count' => count($images)]);
+
+            foreach ($images as $image) {
+                Log::info('RoomController:store - Procesando imagen:', ['nombre_original' => $image->getClientOriginalName()]);
+                try {
+                    $path = $image->store('room_images', 'public'); //  Guarda en storage/app/public/room_images
+                    Log::info("RoomController:store - Imagen guardada exitosamente en: $path");
+
+                    // Crea un registro en la tabla `images` para cada imagen
+                    $room->images()->create([
+                        'url' => Storage::url($path), //  Obtiene la URL pública, // Usa Storage::url para URLs relativas al almacenamiento
+                    ]);
+                    Log::info("RoomController:store - Imagen asociada a la habitación {$room->id} con URL: " . Storage::url($path));
+
+                } catch (\Exception $e) {
+                    Log::error('RoomController:store - Error al guardar la imagen:', ['error' => $e->getMessage(), 'nombre_original' => $image->getClientOriginalName()]);
+                }
+            }
+        } else {
+            Log::info('RoomController:store - No se encontraron archivos de imágenes en la solicitud.');
         }
-    }
+
 
         Log::info('RoomController:store - Redirigiendo a rooms.index.');
         return redirect()->route('rooms.index')->with('success', 'Habitación creada: La habitación ha sido creada con éxito.'); //Se redirige a rooms.index
     }
-
 }

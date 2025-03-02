@@ -6,7 +6,7 @@
 [x] Pedir nombre
 [x] El usuario tiene que poder publicarse.
 [x] Los usuarios que buscan, tiene que visualizar los roomate publicados.
-[ ] Que el buscador funciones
+[x] Que el buscador funciones
 [ ] Poder enviar mensajes a los roomates
 [ ] Single Post de room
 [ ] Single post de roommate
