@@ -5,20 +5,21 @@ import { Button } from "@/Components/ui/button";
 import InputField from '@/Components/InputField';
 import CheckboxField from '@/Components/CheckboxField';
 import MainLayout from '@/Layouts/MainLayout';
-import SelectField from '@/Components/SelectField'; // Importante!
+import SelectField from '@/Components/SelectField';
 import TextareaField from '@/Components/TextareaField';
 import ImageUpload from '@/Components/ImageUpload';
 
 function CreateProfile() {
     const { errors, auth, userProfile } = usePage().props;
 
+    // 1.  Datos iniciales: 'images' debe ser null o un objeto File, NO un array.
     const initialData = {
         name: userProfile?.name || '',
         age: userProfile?.age || '',
         gender: userProfile?.gender || '',
         short_description: userProfile?.short_description || '',
         can_be_contacted: userProfile?.can_be_contacted ?? true,
-        team_up: userProfile?.team_up || '',  // Valor por defecto para SelectField
+        team_up: userProfile?.team_up || '',
         looking_in: userProfile?.looking_in || '',
         budget: userProfile?.budget || '',
         accommodation_for: userProfile?.accommodation_for || 'myself',
@@ -34,7 +35,7 @@ function CreateProfile() {
         description: userProfile?.description || '',
         phone_number: userProfile?.phone_number || '',
         phone_number_public: userProfile?.phone_number_public ?? false,
-        images: [],
+        images: null, //  <--  CAMBIO AQUÍ:  Debe ser null inicialmente.
     };
 
     const { data, setData, post, processing, reset, errors: formErrors } = useForm(initialData);
@@ -43,14 +44,31 @@ function CreateProfile() {
         e.preventDefault();
         console.log('CreateProfile:onSubmit - Iniciando envío del formulario', data);
 
+        // 2. Usa FormData para enviar archivos correctamente:
+        const formData = new FormData();
+        for (let key in data) {
+            if (key === 'images' && data.images) {
+                // Añade la imagen SOLO si existe.
+                formData.append('images', data.images);
+            } else {
+                formData.append(key, data[key]);
+            }
+        }
+
+
         post(route('profiles.store'), {
+            data: formData,  // <-- Envía el FormData.
             onSuccess: () => {
                 console.log('CreateProfile:onSubmit - Perfil creado con éxito.');
-                reset();
+                // No llames a reset() aquí.  Deja los datos en el formulario
+                // para que el usuario pueda ver que se guardaron correctamente.
+                // reset();  // <--  Quita esto.
             },
             onError: (errors) => {
                 console.error('CreateProfile:onSubmit - Error al crear el perfil:', errors);
             },
+            // Importante para enviar archivos:
+            forceFormData: true, // <--  AÑADE ESTO.
         });
     };
 
@@ -65,31 +83,28 @@ function CreateProfile() {
             <div className="max-w-3xl p-6 pt-10 mx-auto mt-10 border rounded-lg">
                 <Head title="Create New Profile" />
                 <form onSubmit={onSubmit} className="space-y-6">
-
-                    {Object.keys(errors).length > 0 && (
-                        <div style={{ color: 'red' }}>
-                            <ul>
-                                {Object.keys(errors).map((key) => (
-                                    <li key={key}>{errors[key]}</li>
+                    {/* Muestra errores de Inertia (si los hay) */}
+                    {Object.keys(formErrors).length > 0 && (
+                        <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
+                            <ul className="mt-1.5 ml-4 list-disc list-inside">
+                                {Object.values(formErrors).map((error, index) => (
+                                    <li key={index}>{error}</li>
                                 ))}
                             </ul>
                         </div>
                     )}
+
                     <div className="mx-auto w-full max-w-[600px]">
                         <ImageUpload
                             data={data}
                             setData={setData}
                             name="images"
-                            initialImage={userProfile?.profile_image ? `/storage/${userProfile.profile_image}` : null}
+                            // Pasa la URL completa, no relativa.
+                            initialImage={userProfile?.profile_image ? `${window.location.origin}/storage/${userProfile.profile_image}` : null}
+                            maxImages={1}  // <--  SOLO 1 IMAGEN.
 
                         />
-                        {userProfile?.profile_image && !data.images.length && (
-                            <img
-                                src={`/storage/${userProfile.profile_image}`}
-                                alt="Profile"
-                                className="object-cover w-32 h-32 mt-2 rounded-full"
-                            />
-                        )}
+                        {/* Ya no necesitas mostrar la imagen aquí, ImageUpload lo hace. */}
                     </div>
 
 

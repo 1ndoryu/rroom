@@ -1,101 +1,96 @@
 // Components/ImageUpload.jsx
 import { Label } from "@/Components/ui/label";
 import { Input } from "@/Components/ui/input";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react'; // Import useRef
 
-function ImageUpload({ data, setData, name, initialImage, maxImages = 8, maxFileSizeMB = 3 }) {
-    const [previews, setPreviews] = useState([]);
+function ImageUpload({ data, setData, name, initialImage, maxImages = 1, maxFileSizeMB = 3 }) {
+    const [preview, setPreview] = useState(null); //  Solo UNA previsualización.
+    const fileInputRef = useRef(null); // Referencia al input file
     const maxFileSize = maxFileSizeMB * 1024 * 1024;
 
     useEffect(() => {
-        // Load initial image if provided
         if (initialImage) {
-            setPreviews([initialImage]);
+            setPreview(initialImage);
         }
 
-        // Revoke object URLs on unmount
-        const currentPreviews = previews;
+        // Limpia el objeto URL al desmontar.
         return () => {
-            currentPreviews.forEach(url => URL.revokeObjectURL(url));
+            if (preview && preview.startsWith('blob:')) {
+                URL.revokeObjectURL(preview);
+            }
         };
-    }, [initialImage, previews]); //  Depend on initialImage
+    }, [initialImage, preview]);
 
 
     const handleImageChange = (e) => {
-        handleFiles(Array.from(e.target.files));
+        const file = e.target.files[0]; //  Toma solo el PRIMER archivo.
+        if (file && file.size <= maxFileSize && ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)) {
+            setData(name, file); //  Guarda el OBJETO File, no un array.
+            setPreview(URL.createObjectURL(file)); //  Crea la previsualización.
+        } else {
+          //Si no es valido, se establece los valores a null
+          setData(name, null);
+          setPreview(null);
+        }
     };
 
     const handleDrop = (e) => {
         e.preventDefault();
-        handleFiles(Array.from(e.dataTransfer.files));
-    };
-
-
-    const handleFiles = (files) => {
-        let newFiles = Array.from(files)
-            .filter(file => file.size <= maxFileSize && ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type));
-
-        let updatedFiles;
-        if (initialImage) { // If there was an initial image, replace it
-            updatedFiles = [...newFiles].slice(0, maxImages);
-        } else { // Otherwise, add to existing files
-            const currentImages = data.images || [];
-            updatedFiles = [...currentImages, ...newFiles].slice(0, maxImages);
+        const file = e.dataTransfer.files[0];  //  Toma solo el PRIMER archivo.
+         if (file && file.size <= maxFileSize && ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)) {
+            setData(name, file);
+            setPreview(URL.createObjectURL(file));
+        }  else {
+          //Si no es valido, se establece los valores a null
+          setData(name, null);
+          setPreview(null);
         }
-
-        setData(name, updatedFiles);
-
-        // Create previews, either replacing the initial image or adding to existing ones.
-        const newPreviews = updatedFiles.map(file => {
-            return typeof file === 'string' ? file : URL.createObjectURL(file)
-        });
-
-        setPreviews(newPreviews);
-
     };
 
-    const handleDelete = () => {  //add de delete function
-        setData(name, []);
-        setPreviews([]);
+    const handleDelete = () => {
+        setData(name, null); //  Borra la imagen del estado.
+        setPreview(null);     //  Borra la previsualización.
+        // Limpia el input file (para que se pueda volver a seleccionar el mismo archivo).
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
     };
+
 
     return (
         <div>
-            <Label>Images</Label>
+            <Label>Image</Label>
             <div
                 className="p-4 text-center border-2 border-gray-300 border-dashed cursor-pointer"
-                onClick={() => document.getElementById('image-upload').click()}
+                onClick={() => fileInputRef.current?.click()} // Usa la referencia
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDrop}
             >
-                {previews.length === 0 ? (
-                    <p>Upload an image or drag and drop here</p>
-                ) : (
-                    <div className="flex flex-wrap justify-center gap-2">
-                        {previews.map((src, index) => (
-                            <div key={index} className="relative">
-                                <img src={src} alt={`Preview ${index}`} className="object-cover rounded h-60 w-60" />
-                                <button
-                                    type="button"
-                                    className="absolute top-0 right-0 p-1 m-1 text-white bg-red-500 rounded-full"
-                                    onClick={handleDelete}
-                                >
-                                    X {/* Consider using an icon */}
-                                </button>
-                            </div>
-                        ))}
+                {preview ? (
+                    <div className="relative">
+                        <img src={preview} alt="Preview" className="object-cover rounded h-60 w-60" />
+                        <button
+                            type="button"
+                            className="absolute top-0 right-0 p-1 m-1 text-white bg-red-500 rounded-full"
+                            onClick={handleDelete}
+                        >
+                            X
+                        </button>
                     </div>
+                ) : (
+                    <p>Upload an image or drag and drop here</p>
                 )}
                 <Input
                     id="image-upload"
                     type="file"
-                    multiple
                     accept="image/jpeg,image/png,image/gif,image/webp"
                     className="hidden"
                     onChange={handleImageChange}
+                    ref={fileInputRef} // Asigna la referencia
                 />
             </div>
         </div>
     );
 }
+
 export default ImageUpload;
