@@ -1,15 +1,16 @@
-'use client';
 // resources/js/Layouts/MainLayout.jsx
+
+'use client';
+
 import React from 'react';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react'; // Importar 'router'
 import { Button } from '@/Components/ui/button';
 import { Head } from '@inertiajs/react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/Components/ui/avatar';
 
 function AuthNavbar({ user }) {
-    const userName = user?.name || ''; // Cambia 'username' por 'name'.
+    const userName = user?.name || '';
     const initials = userName.substring(0, 2).toUpperCase();
-
 
     return (
         <div className="flex items-stretch justify-between w-full">
@@ -36,7 +37,6 @@ function AuthNavbar({ user }) {
                     </div>
                     <div className="flex items-center">
                         <Avatar>
-                            {/*  'name' en lugar de 'username' */}
                             <AvatarImage src={user?.avatar || ''} alt={userName} />
                             <AvatarFallback>{initials}</AvatarFallback>
                         </Avatar>
@@ -50,11 +50,11 @@ function AuthNavbar({ user }) {
 function GuestNavbar() {
     return (
         <div className="flex items-center justify-end w-full gap-5">
-            <Button variant="ghost">
-                <Link href="/login">Log in</Link>
+            <Button variant="ghost" onClick={() => router.visit('/login')}>
+                Log in
             </Button>
-            <Button variant="default">
-                <Link href="/register">Register</Link>
+            <Button variant="default" onClick={() => router.visit('/register')}>
+                Register
             </Button>
         </div>
     );
