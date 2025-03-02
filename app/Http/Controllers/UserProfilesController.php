@@ -23,6 +23,7 @@ class UserProfilesController extends Controller
 
     public function store(Request $request)
     {
+        // --- Validación ---
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'age' => 'required|integer|min:18',
@@ -33,9 +34,10 @@ class UserProfilesController extends Controller
             'ready_to_move' => 'required|date',
             'description' => 'required|string|min:75',
             'phone_number' => 'nullable|string|max:20',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            // Valida SOLO UNA imagen.  'images' ahora es un único archivo, no un array.
+            'images' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'can_be_contacted' => 'boolean',
-            'team_up' => 'nullable|string|in:looking,open,not_interested', 
+            'team_up' => 'nullable|string|in:looking,open,not_interested',
             'accommodation_for' => 'string',
             'lgbt_friendly' => 'boolean',
             'cannabis_friendly' => 'boolean',
@@ -53,6 +55,8 @@ class UserProfilesController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+
+        // --- Preparación de los datos ---
         $profileData = [
             'name' => $request->name,
             'age' => $request->age,
@@ -75,31 +79,37 @@ class UserProfilesController extends Controller
             'description' => $request->description,
             'phone_number' => $request->phone_number,
             'phone_number_public' => (bool) $request->phone_number_public,
+            // profile_image se añade abajo, después de procesar la imagen (si hay).
         ];
 
+        // --- Obtener el perfil existente ---
         $existingProfile = $request->user()->profile;
 
-        if ($request->hasFile('images') && $request->file('images')[0]->isValid()) {
-            $image = $request->file('images')[0];
-            $path = $image->store('profile_images', 'public');
+        // --- Procesamiento de la imagen ---
 
+        // 1.  Si se subió una imagen, guárdala y actualiza $profileData.
+        if ($request->hasFile('images')) {
+            $image = $request->file('images');
+            $path = $image->store('profile_images', 'public'); // Guarda en storage/app/public/profile_images
+
+            // Borra la imagen anterior, SI EXISTE.
             if ($existingProfile && $existingProfile->profile_image) {
                 Storage::disk('public')->delete($existingProfile->profile_image);
             }
 
-            $profileData['profile_image'] = $path;
-        } elseif (empty($request->images)) {
-            if ($existingProfile && $existingProfile->profile_image) {
-                Storage::disk('public')->delete($existingProfile->profile_image);
-                $profileData['profile_image'] = null;
-            }
+            $profileData['profile_image'] = $path; // Añade la ruta al array de datos.
+
+        } elseif (!$request->hasFile('images') && $existingProfile && $existingProfile->profile_image){
+            Storage::disk('public')->delete($existingProfile->profile_image);
+			$profileData['profile_image'] = null;
         }
-
+         // --- Crear o actualizar el perfil ---
+        // Usa updateOrCreate para manejar tanto la creación como la actualización.
         $profile = UserProfile::updateOrCreate(
             ['user_id' => $request->user()->id],
             $profileData
         );
 
-        return Redirect::route('profiles.create')->with('success', 'Profile created/updated.');
+        return Redirect::route('profiles.create')->with('success', 'Perfil creado/actualizado.'); // Mensaje en español
     }
 }
