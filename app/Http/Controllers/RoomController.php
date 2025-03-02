@@ -17,7 +17,7 @@ class RoomController extends Controller
     {
         Log::info('RoomController:index - Iniciando la función index.');
 
-        $rooms = Room::with(['user', 'images'])->get(); //  Carga las habitaciones con sus usuarios e imágenes
+        $rooms = Room::with(['user', 'images'])->get();
 
         $roomsData = $rooms->map(function ($room) {
             return [
@@ -51,11 +51,12 @@ class RoomController extends Controller
                 'roomies' => $room->roomies,
                 'minimum_stay' => $room->minimum_stay,
                 'maximum_stay' => $room->maximum_stay,
-                'user' => [ 
+                'user' => [
                     'id' => $room->user->id,
                     'name' => $room->user->name,
                 ],
-                'imageUrls' => $room->images->pluck('url')->toArray(), //  Obtiene las URLs de las imágenes
+                // Usa asset() para generar URLs absolutas para las imágenes
+                'imageUrls' => $room->images->map(fn ($image) => asset($image->url))->toArray(),
                 'created_at' => $room->created_at,
                 'updated_at' => $room->updated_at,
             ];
@@ -68,8 +69,7 @@ class RoomController extends Controller
             'rooms' => $roomsData,
         ]);
     }
-
-    public function create()
+     public function create()
     {
         Log::info('RoomController:create - Mostrando el formulario de creación de habitación.');
         return Inertia::render('Rooms/Create');
@@ -140,6 +140,5 @@ class RoomController extends Controller
         Log::info('RoomController:store - Redirigiendo a rooms.index.');
         return redirect()->route('rooms.index')->with('success', 'Habitación creada: La habitación ha sido creada con éxito.');
     }
-
 
 }

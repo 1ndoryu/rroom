@@ -1,19 +1,20 @@
+// resources/js/Pages/Home.jsx
 import React from 'react';
 import { Head } from '@inertiajs/react';
 import { Button } from '@/Components/ui/button';
-import MainLayout from '@/Layouts/MainLayout'; // Importamos MainLayout
-import { usePage } from '@inertiajs/react'; // Importamos usePage
+import MainLayout from '@/Layouts/MainLayout';
+import { usePage } from '@inertiajs/react';
+import RoomCard from '@/Components/RoomCard';
 
-function Home() {
-
+function Home({rooms}) {  //props
     const { auth } = usePage().props;
 
     return (
         <MainLayout auth={auth}>
             <Head title="Home" />
 
-            {/* Sección para usuarios no autenticados */}
-            {!auth.user && (
+              {/* Sección para usuarios no autenticados */}
+              {!auth.user && (
                 <div className="flex flex-col items-center justify-center min-h-[70vh]">
                     <div className="text-center">
                         <div className="inline-block px-4 py-2 mb-4 text-blue-600 bg-blue-100 rounded-lg">
@@ -42,8 +43,8 @@ function Home() {
                 </div>
             )}
 
-            {/* Sección para usuarios autenticados */}
-            {auth.user && (
+             {/* Sección para usuarios autenticados */}
+             {auth.user && (
                 <div className="flex flex-col items-center justify-center min-h-[60vh]">
                     <div className="text-center">
                         <h1 className="text-6xl font-bold leading-tight text-[--black]">
@@ -65,6 +66,16 @@ function Home() {
                     </div>
                 </div>
             )}
+
+            {/* Sección de habitaciones (pública) */}
+            <div className="mt-10">
+                <h2 className="mb-5 text-2xl font-semibold text-center">Discover Rooms</h2>
+                <div className="grid grid-cols-1 card-wrapper gap-7 my-7 md:grid-cols-2 lg:gap-10 lg:my-10">
+                     {rooms?.map(room => (
+                        <RoomCard key={room.id} room={room} />
+                    ))}
+                </div>
+            </div>
         </MainLayout>
     );
 }
