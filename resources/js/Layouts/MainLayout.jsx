@@ -2,8 +2,8 @@
 
 'use client';
 
-import React from 'react';
-import { Link, router } from '@inertiajs/react'; // Importar 'router'
+import React, { useState } from 'react'; // Importa useState
+import { Link, router } from '@inertiajs/react';
 import { Button } from '@/Components/ui/button';
 import { Head } from '@inertiajs/react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/Components/ui/avatar';
@@ -11,19 +11,28 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/Components/ui/avatar';
 function AuthNavbar({ user }) {
     const userName = user?.name || '';
     const initials = userName.substring(0, 2).toUpperCase();
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const handleSearch = (event) => {
+        event.preventDefault();
+        router.get('/content', { search: searchTerm }, { replace: true, preserveState: true });
+    };
 
     return (
         <div className="flex items-stretch justify-between w-full">
             <div id="sr" className="absolute z-50 w-full max-w-md -translate-x-1/2 top-3 left-1/2">
-                <form className="flex items-center">
+                <form className="flex items-center" onSubmit={handleSearch}>
                     <input
                         type="text"
                         placeholder="Search..."
                         className="w-full px-3 py-1 text-sm bg-white border rounded-full focus:outline-none focus:ring-2 focus:ring-gray-400"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </form>
             </div>
 
+            {/* Resto del componente AuthNavbar */}
             <div className="flex items-center justify-between w-full">
                 <div></div>
                 <div className="flex items-center gap-5">
