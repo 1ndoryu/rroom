@@ -1,27 +1,22 @@
-# Vistas
 
 [x] La pagina de inicio
-
-# Registro
-
 [x] Que los usuarios se puedan registrar y controlar en strapi
 [x] Mejorar view del registro
 [x] Mejorar view del login
 [x] Pedir nombre
-
-# Publicar roommate
-
 [x] El usuario tiene que poder publicarse.
+[x] Los usuarios que buscan, tiene que visualizar los roomate publicados.
+[ ] Que el buscador funciones
+[ ] Poder enviar mensajes a los roomates
+[ ] Single Post de room
+[ ] Single post de roommate
 
-# Para despues
 
+#
 [ ] Campo de Looking in... debe mostrar ubicaciones
 [ ] Campo de Adress debe mostrar ubicaciones
 
-# Buscar roommate
 
-[x] Los usuarios que buscan, tiene que visualizar los roomate publicados.
-[ ] Poder enviar mensajes a los roomates
 
 #Algunas dudas que aclarar.
 
