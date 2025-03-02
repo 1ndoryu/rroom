@@ -6,15 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-
         Schema::create('user_profiles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); //  Importante: Clave foránea
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->unsignedInteger('age');
             $table->string('gender');
@@ -25,7 +21,6 @@ return new class extends Migration
             $table->decimal('budget', 8, 2);
             $table->string('accommodation_for');
             $table->date('ready_to_move');
-            //tags
             $table->boolean('lgbt_friendly')->default(false);
             $table->boolean('cannabis_friendly')->default(false);
             $table->boolean('cat_friendly')->default(false);
@@ -34,18 +29,15 @@ return new class extends Migration
             $table->boolean('student_friendly')->default(false);
             $table->boolean('senior_friendly')->default(false);
             $table->boolean('requires_background_check')->default(false);
-            //
             $table->text('description');
             $table->string('phone_number')->nullable();
             $table->boolean('phone_number_public')->default(false);
-            $table->string('profile_image')->nullable();
+			//Usa addColumn para que no de error si la columna ya existe
+            $table->addColumn('string', 'profile_image', ['nullable' => true, 'after' => 'phone_number_public']);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('user_profiles');
