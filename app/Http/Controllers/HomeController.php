@@ -29,8 +29,9 @@ class HomeController extends Controller
                     'id' => $room->user->id,
                     'name' => $room->user->name,
                 ],
-                'imageUrls' => $room->images->map(fn ($image) => $image->url)->toArray(),
+                'imageUrls' => $room->images->map(fn($image) => $image->url)->toArray(),
                 'address' => $room->address,
+
                 'rent' => $room->rent,
                 'preferred_gender' => $room->preferred_gender,
                 'description' => $room->description,
@@ -56,6 +57,7 @@ class HomeController extends Controller
                 'name' => $profile->name,
                 'age' => $profile->age,
                 'gender' => $profile->gender,
+                'budget' => $profile->budget,
                 'description' => $profile->description,
                 'type' => 'profile',
             ];

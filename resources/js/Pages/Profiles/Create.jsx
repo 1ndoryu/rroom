@@ -5,10 +5,9 @@ import { Button } from "@/Components/ui/button";
 import InputField from '@/Components/InputField';
 import CheckboxField from '@/Components/CheckboxField';
 import MainLayout from '@/Layouts/MainLayout';
-import SelectField from '@/Components/SelectField';
+import SelectField from '@/Components/SelectField'; // Importante!
 import TextareaField from '@/Components/TextareaField';
 import ImageUpload from '@/Components/ImageUpload';
-
 
 function CreateProfile() {
     const { errors, auth, userProfile } = usePage().props;
@@ -18,8 +17,8 @@ function CreateProfile() {
         age: userProfile?.age || '',
         gender: userProfile?.gender || '',
         short_description: userProfile?.short_description || '',
-        can_be_contacted: userProfile?.can_be_contacted ?? true, //  Usa ?? para valores booleanos
-        team_up: userProfile?.team_up || '',
+        can_be_contacted: userProfile?.can_be_contacted ?? true,
+        team_up: userProfile?.team_up || '',  // Valor por defecto para SelectField
         looking_in: userProfile?.looking_in || '',
         budget: userProfile?.budget || '',
         accommodation_for: userProfile?.accommodation_for || 'myself',
@@ -37,7 +36,6 @@ function CreateProfile() {
         phone_number_public: userProfile?.phone_number_public ?? false,
         images: [],
     };
-
 
     const { data, setData, post, processing, reset, errors: formErrors } = useForm(initialData);
 
@@ -68,7 +66,6 @@ function CreateProfile() {
                 <Head title="Create New Profile" />
                 <form onSubmit={onSubmit} className="space-y-6">
 
-                    {/* Mostrar errores de validación */}
                     {Object.keys(errors).length > 0 && (
                         <div style={{ color: 'red' }}>
                             <ul>
@@ -78,7 +75,6 @@ function CreateProfile() {
                             </ul>
                         </div>
                     )}
-                    {/* Image Upload */}
                     <div className="mx-auto w-full max-w-[600px]">
                         <ImageUpload
                             data={data}
@@ -143,13 +139,17 @@ function CreateProfile() {
                             label="Allow Contact"
                             description="Allow other users to message you."
                         />
-
-                        <InputField  //podria ser select
+                        {/*  USAR SelectField AQUI */}
+                        <SelectField
                             data={data}
                             setData={setData}
                             name="team_up"
                             label="Team Up"
-                            placeholder="Team Up preferences (optional)"
+                            options={[
+                                { value: 'looking', label: 'Looking for Team Ups' },
+                                { value: 'open', label: 'Open to Team Ups' },
+                                { value: 'not_interested', label: 'Not Interested in Team Ups' },
+                            ]}
                         />
 
                         <InputField
@@ -193,7 +193,6 @@ function CreateProfile() {
                     </div>
 
 
-                    {/* Environment & Compatibility */}
                     {renderSectionTitle('Preferences')}
                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                         {[
@@ -215,7 +214,6 @@ function CreateProfile() {
                         ))}
                     </div>
 
-                    {/* Extra Requirements */}
                     {renderSectionTitle('Extra Requirements')}
                     <div className="grid grid-cols-1 gap-4">
                         <CheckboxField
@@ -255,7 +253,6 @@ function CreateProfile() {
                         />
                     </div>
 
-                    {/* Submit Button */}
                     <Button type="submit" className="w-full p-3 text-white rounded-md bg-[--black] hover:border hover:bg-[--white]" disabled={processing}>
                         {processing ? 'Creating...' : 'Create Profile'}
                     </Button>

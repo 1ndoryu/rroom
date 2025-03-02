@@ -8,7 +8,7 @@ use Inertia\Inertia;
 use App\Models\UserProfile;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Storage; // Import Storage
+use Illuminate\Support\Facades\Storage;
 
 class UserProfilesController extends Controller
 {
@@ -34,9 +34,8 @@ class UserProfilesController extends Controller
             'description' => 'required|string|min:75',
             'phone_number' => 'nullable|string|max:20',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            // Add validation for other boolean fields if needed
             'can_be_contacted' => 'boolean',
-            'team_up' => 'nullable|string', // Assuming team_up can be a string
+            'team_up' => 'nullable|string|in:looking,open,not_interested', 
             'accommodation_for' => 'string',
             'lgbt_friendly' => 'boolean',
             'cannabis_friendly' => 'boolean',
@@ -59,13 +58,13 @@ class UserProfilesController extends Controller
             'age' => $request->age,
             'gender' => $request->gender,
             'short_description' => $request->short_description,
-            'can_be_contacted' => (bool) $request->can_be_contacted, // Cast to boolean
+            'can_be_contacted' => (bool) $request->can_be_contacted,
             'team_up' => $request->team_up,
             'looking_in' => $request->looking_in,
             'budget' => $request->budget,
             'accommodation_for' => $request->accommodation_for,
             'ready_to_move' => $request->ready_to_move,
-            'lgbt_friendly' => (bool) $request->lgbt_friendly,  // Cast to boolean
+            'lgbt_friendly' => (bool) $request->lgbt_friendly,
             'cannabis_friendly' => (bool) $request->cannabis_friendly,
             'cat_friendly' => (bool) $request->cat_friendly,
             'dog_friendly' => (bool) $request->dog_friendly,
@@ -78,24 +77,21 @@ class UserProfilesController extends Controller
             'phone_number_public' => (bool) $request->phone_number_public,
         ];
 
-        // Get the existing profile (if it exists)
         $existingProfile = $request->user()->profile;
 
         if ($request->hasFile('images') && $request->file('images')[0]->isValid()) {
             $image = $request->file('images')[0];
             $path = $image->store('profile_images', 'public');
 
-            // Delete the old image if it exists
             if ($existingProfile && $existingProfile->profile_image) {
                 Storage::disk('public')->delete($existingProfile->profile_image);
             }
 
             $profileData['profile_image'] = $path;
         } elseif (empty($request->images)) {
-            // If no new image is uploaded AND the images array is empty, delete the existing image.
             if ($existingProfile && $existingProfile->profile_image) {
                 Storage::disk('public')->delete($existingProfile->profile_image);
-                $profileData['profile_image'] = null; // Set to null in the database
+                $profileData['profile_image'] = null;
             }
         }
 

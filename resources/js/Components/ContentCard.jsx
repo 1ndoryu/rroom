@@ -2,13 +2,12 @@
 import React from 'react';
 
 function ContentCard({ item }) {
-    //  Accede a user de forma segura, *después* de verificar que item existe.
-    const user = item?.user || {}; //  Ahora item también es opcional
+    const user = item?.user || {};
     const firstImageUrl = item?.imageUrls?.[0] || item?.profile_image;
 
     const title = item?.address || item?.name;
     const description = item?.description;
-    const detail1 = item?.address ? `₹${item?.rent}` : item?.budget;
+    const detail1 = item?.address ? `₹${item?.rent}` : `₹${Math.floor(item?.budget || 0)}`;
     const detail1Label = item?.address ? "Rent" : "Budget";
     const detail2 = item?.address ? item?.preferred_gender : item?.gender;
     const detail2Label = item?.address ? "Preferred Gender" : "Gender";
@@ -31,7 +30,6 @@ function ContentCard({ item }) {
                 <div className="text-wrapper py-3 px-5 relative h-full flex flex-col justify-start items-start gap-0.5 w-full">
                     <div className="flex items-center space-x-1 user-info">
                         <p className="text-base truncate max-w-[170px] md:text-lg text-gray-600 font-medium">
-                            {/*  Usa optional chaining y el operador de coalescencia nula */}
                             {user?.name ?? user?.username ?? 'Unknown User'}
                         </p>
                     </div>
