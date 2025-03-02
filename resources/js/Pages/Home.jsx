@@ -4,17 +4,17 @@ import { Head } from '@inertiajs/react';
 import { Button } from '@/Components/ui/button';
 import MainLayout from '@/Layouts/MainLayout';
 import { usePage } from '@inertiajs/react';
-import RoomCard from '@/Components/RoomCard';
+import ContentCard from '@/Components/ContentCard';
 
-function Home({rooms}) {  //props
+function Home({ rooms }) {
     const { auth } = usePage().props;
 
     return (
         <MainLayout auth={auth}>
             <Head title="Home" />
 
-              {/* Sección para usuarios no autenticados */}
-              {!auth.user && (
+            {/* Sección para usuarios no autenticados */}
+            {!auth.user && (
                 <div className="flex flex-col items-center justify-center min-h-[70vh]">
                     <div className="text-center">
                         <div className="inline-block px-4 py-2 mb-4 text-blue-600 bg-blue-100 rounded-lg">
@@ -43,8 +43,8 @@ function Home({rooms}) {  //props
                 </div>
             )}
 
-             {/* Sección para usuarios autenticados */}
-             {auth.user && (
+            {/* Sección para usuarios autenticados */}
+            {auth.user && (
                 <div className="flex flex-col items-center justify-center min-h-[60vh]">
                     <div className="text-center">
                         <h1 className="text-6xl font-bold leading-tight text-[--black]">
@@ -60,7 +60,7 @@ function Home({rooms}) {  //props
                                 <a href="/rooms/create">Post Room</a>
                             </Button>
                             <Button asChild variant="secondary" size="lg">
-                                <a href="">Post My Profile</a>
+                                <a href="/profiles/create">Post My Profile</a>
                             </Button>
                         </div>
                     </div>
@@ -71,8 +71,9 @@ function Home({rooms}) {  //props
             <div className="mt-10">
                 <h2 className="mb-5 text-2xl font-semibold text-center text-[--black]">Discover Rooms</h2>
                 <div className="grid grid-cols-1 card-wrapper gap-7 my-7 md:grid-cols-2 lg:gap-10 lg:my-10">
-                     {rooms?.map(room => (
-                        <RoomCard key={room.id} room={room} />
+                    {/*  Asegúrate de que rooms sea un array antes de usar map */}
+                    {Array.isArray(rooms) && rooms.map(room => (
+                        <ContentCard key={room.id} item={room} />
                     ))}
                 </div>
             </div>
