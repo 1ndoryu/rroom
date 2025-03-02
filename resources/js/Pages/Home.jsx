@@ -69,7 +69,7 @@ function Home({rooms}) {  //props
 
             {/* Sección de habitaciones (pública) */}
             <div className="mt-10">
-                <h2 className="mb-5 text-2xl font-semibold text-center">Discover Rooms</h2>
+                <h2 className="mb-5 text-2xl font-semibold text-center text-[--black]">Discover Rooms</h2>
                 <div className="grid grid-cols-1 card-wrapper gap-7 my-7 md:grid-cols-2 lg:gap-10 lg:my-10">
                      {rooms?.map(room => (
                         <RoomCard key={room.id} room={room} />

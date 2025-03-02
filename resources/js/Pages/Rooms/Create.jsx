@@ -69,7 +69,7 @@ function CreateRoom() {
 
     return (
         <MainLayout auth={auth}>
-            <div className="max-w-3xl p-6 mx-auto bg-white rounded-lg shadow">
+            <div className="max-w-3xl p-6 pt-10 mx-auto mt-10 border rounded-lg" >
                 <Head title="Create New Room" />
                 <form onSubmit={onSubmit} className="space-y-6"> {/* Solo onSubmit, no encType */}
 
@@ -261,7 +261,7 @@ function CreateRoom() {
                     </div>
 
                     {/* Submit Button */}
-                    <Button type="submit" className="w-full p-3 text-white bg-teal-500 rounded-md hover:bg-teal-600" disabled={processing}>
+                    <Button type="submit" className="w-full p-3 text-white rounded-md bg-[--black] hover:border hover:bg-[--white]" disabled={processing}>
                         {processing ? 'Creating...' : 'Create Room'}
                     </Button>
                 </form>

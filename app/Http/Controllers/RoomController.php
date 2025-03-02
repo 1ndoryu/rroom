@@ -17,8 +17,8 @@ class RoomController extends Controller
     {
         Log::info('RoomController:index - Iniciando la función index.');
 
-        $rooms = Room::with(['user', 'images'])->get();
-
+        $rooms = Room::with(['user', 'images'])->latest()->get(); 
+        
         $roomsData = $rooms->map(function ($room) {
             return [
                 'id' => $room->id,
@@ -55,8 +55,8 @@ class RoomController extends Controller
                     'id' => $room->user->id,
                     'name' => $room->user->name,
                 ],
-                // Usa asset() para generar URLs absolutas para las imágenes
-                'imageUrls' => $room->images->map(fn ($image) => asset($image->url))->toArray(),
+                // Usa asset() para generar URLs absolutas para las imágenes, o solo url
+                'imageUrls' => $room->images->map(fn ($image) => $image->url)->toArray(),
                 'created_at' => $room->created_at,
                 'updated_at' => $room->updated_at,
             ];
@@ -131,14 +131,14 @@ class RoomController extends Controller
 
             // Crea un registro en la tabla `images` para cada imagen
             $room->images()->create([
-                'url' => Storage::url($path), //  Obtiene la URL pública
+                'url' => Storage::url($path), //  Obtiene la URL pública, // Usa Storage::url para URLs relativas al almacenamiento
             ]);
             Log::info("RoomController:store - Imagen asociada a la habitación {$room->id}");
         }
     }
 
         Log::info('RoomController:store - Redirigiendo a rooms.index.');
-        return redirect()->route('rooms.index')->with('success', 'Habitación creada: La habitación ha sido creada con éxito.');
+        return redirect()->route('rooms.index')->with('success', 'Habitación creada: La habitación ha sido creada con éxito.'); //Se redirige a rooms.index
     }
 
 }
