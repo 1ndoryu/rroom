@@ -1,29 +1,25 @@
+// resources/js/ssr.jsx
 import { createInertiaApp } from '@inertiajs/react';
 import createServer from '@inertiajs/react/server';
+import { renderToString } from 'react-dom/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import ReactDOMServer from 'react-dom/server';
-import { route } from '../../vendor/tightenco/ziggy';
-
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createServer((page) =>
     createInertiaApp({
         page,
-        render: ReactDOMServer.renderToString,
-        title: (title) => `${title} - ${appName}`,
-        resolve: (name) =>
-            resolvePageComponent(
+        render: renderToString,
+        resolve: (name) => {
+            const pagePromise = resolvePageComponent(
                 `./Pages/${name}.jsx`,
-                import.meta.glob('./Pages/**/*.jsx'),
-            ),
+                import.meta.glob('./Pages/**/*.jsx')
+            );
+            return pagePromise.then((module) => {
+                // Ya se esta pasando el default, no es necesario volver a pasarlo
+                return module;
+            });
+        },
         setup: ({ App, props }) => {
-            global.route = (name, params, absolute) =>
-                route(name, params, absolute, {
-                    ...page.props.ziggy,
-                    location: new URL(page.props.ziggy.location),
-                });
-
             return <App {...props} />;
         },
-    }),
+    })
 );

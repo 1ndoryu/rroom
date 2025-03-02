@@ -1,7 +1,8 @@
+// vite.config.js
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import laravel from 'laravel-vite-plugin';
-import path from 'path';
+import path from 'path'; // Importa 'path'
 import { defineConfig } from 'vite';
 
 // Para producción usamos el dominio real
@@ -29,17 +30,25 @@ if (useHttps) {
 }
 
 export default defineConfig({
-    server: serverConfig,
     plugins: [
         laravel({
-            input: 'resources/js/app.jsx',
+            input: ['resources/css/app.css', 'resources/js/app.jsx'],
+            ssr: 'resources/js/ssr.jsx', //  <--  AÑADE ESTO
             refresh: true,
         }),
         react(),
     ],
     resolve: {
+        //  <--  ASEGÚRATE DE QUE ESTÉ ASÍ
         alias: {
             '@': path.resolve(__dirname, 'resources/js'),
+
+            'ziggy-vue': path.resolve('vendor/tightenco/ziggy/dist/vue.es.js'),
+            ziggy: path.resolve('vendor/tightenco/ziggy/dist'),
         },
+    },
+    ssr: {
+        // <--  Y ESTO TAMBIÉN
+        noExternal: ['@inertiajs/react'],
     },
 });
