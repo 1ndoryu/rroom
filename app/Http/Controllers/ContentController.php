@@ -1,8 +1,6 @@
 <?php
 // app/Http/Controllers/ContentController.php
 
-// app/Http/Controllers/ContentController.php
-
 namespace App\Http\Controllers;
 
 use App\Models\Room;
