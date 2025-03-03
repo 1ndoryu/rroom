@@ -1,4 +1,5 @@
 
+# Backend
 [x] La pagina de inicio
 [x] Que los usuarios se puedan registrar y controlar en strapi
 [x] Mejorar view del registro
@@ -7,10 +8,15 @@
 [x] El usuario tiene que poder publicarse.
 [x] Los usuarios que buscan, tiene que visualizar los roomate publicados.
 [x] Que el buscador funciones
-[ ] Poder enviar mensajes a los roomates
 [ ] Single Post de room
 [ ] Single post de roommate
+[ ] Poder enviar mensajes a los roomates
 
+# Front
+[ ] Arreglar imagen de perfil en el formulario de creacion
+[ ] Arreglar detalles visuales en los formularios
+[ ] Mejorar presentacion pagina de inicio 
+[ ] Componente en content de que filtra la busqueda entre rooms, roommates y pg con dropdown de genero
 
 #
 [ ] Campo de Looking in... debe mostrar ubicaciones
