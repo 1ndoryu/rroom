@@ -23,13 +23,7 @@
 # Para despues...
 [ ] Campo de Looking in... debe mostrar ubicaciones
 [ ] Campo de Adress debe mostrar ubicaciones
-<<<<<<< HEAD
 
-#Algunas dudas que aclarar.
-
-=======
->>>>>>> d93c62f47cdd6102b17bdbf0a9acf59dcdf90684
-#
 
 # Publicaciones de espacios disponibles (habitaciones, pisos completos, camas en hostels, etc.)
 
