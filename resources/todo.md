@@ -17,6 +17,7 @@
 [ ] Arreglar detalles visuales en los formularios
 [ ] Mejorar presentacion pagina de inicio 
 [ ] Componente en content de que filtra la busqueda entre rooms, roommates y pg con dropdown de genero
+[ ] Mejora aspecto de los ContentCards
 
 #
 [ ] Campo de Looking in... debe mostrar ubicaciones
