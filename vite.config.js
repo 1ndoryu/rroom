@@ -42,7 +42,7 @@ export default defineConfig({
         //  <--  ASEGÚRATE DE QUE ESTÉ ASÍ
         alias: {
             '@': path.resolve(__dirname, 'resources/js'),
-
+            '@svgs': path.resolve(__dirname, 'resources/assets/svgs'),
             'ziggy-vue': path.resolve('vendor/tightenco/ziggy/dist/vue.es.js'),
             ziggy: path.resolve('vendor/tightenco/ziggy/dist'),
         },

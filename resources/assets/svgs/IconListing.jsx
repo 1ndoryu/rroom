@@ -1,3 +1,4 @@
+// resources/assets/svgs/IconListing.jsx
 export default function IconListing() {
     return (
         <span>

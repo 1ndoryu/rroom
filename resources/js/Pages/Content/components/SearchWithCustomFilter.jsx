@@ -1,8 +1,8 @@
-// resources\css\SearchWithCustomFilter.css
+// resources/js/Pages/Content/components/SearchWithCustomFilter.jsx
 import './SearchWithCustomFilter.css'
 
-// Svgs resources\assets\svgs\all-listing.svg
-import { ReactComponent as SearchIcon } from '../../../assets/svgs/search-icon.svg'
+
+import IconListing from '@svgs/IconListing'; 
 
 export default function SearchWithCustomFilter() {
     const categories = [
