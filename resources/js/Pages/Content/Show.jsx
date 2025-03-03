@@ -23,7 +23,7 @@ function ContentShow({ item }) {
                                 key={index}
                                 src={url}
                                 alt={`${title} - Image ${index + 1}`}
-                                className="object-cover object-center w-full h-auto overflow-hidden rounded-lg"
+                                className="object-cover object-center w-[695px] h-auto overflow-hidden rounded-lg"
                             />
                         ))}
                     </div>
