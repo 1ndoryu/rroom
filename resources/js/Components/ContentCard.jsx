@@ -1,5 +1,5 @@
 // resources/js/Components/ContentCard.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from '@inertiajs/react';
 
 function ContentCard({ item }) {
@@ -13,18 +13,21 @@ function ContentCard({ item }) {
     const detail2 = item?.address ? item?.preferred_gender : item?.gender;
     const detail2Label = item?.address ? "Preferred Gender" : "Gender";
 
+    console.log(item)
+
     return (
         <Link href={route('content.show', { type: item.type, id: item.id })}>
             <div className="relative transition duration-200 transform bg-white border border-gray-200 rounded-lg cursor-pointer content-card">
                 {/* ... resto del código de la tarjeta ... */}
                 <div className="flex">
-                    <div className="image-container relative w-[300px] bg-slate-100" style={{ borderRadius: '5px 0px 0px', overflow: 'hidden' }}>
-                        <div className="relative image-wrapper" style={{ paddingBottom: '100%' }}>
+                    <div className="image-container relative w-[300px] max-[1268px]:w-[400px] bg-slate-100" style={{ borderRadius: '5px 0px 0px', overflow: 'hidden' }}>
+                        <div className="relative image-wrapper h-full" style={{ paddingBottom: '100%' }}>
                             {firstImageUrl ? (
                                 <img
                                     alt={title}
                                     src={firstImageUrl}
                                     className="absolute inset-0 object-cover w-full h-full"
+                                    style={{ borderRadius: '0px 0px 0px 5px' }}
                                 />
                             ) : null}
                         </div>
@@ -43,27 +46,20 @@ function ContentCard({ item }) {
                             </p>
                         </div>
 
-                        <div className="flex details-container">
-                            <div className="detail1-container flex flex-col lg:flex-row items-start gap-1.5 lg:gap-0 text-xs lg:text-sm text-gray-600 font-medium lg:pb-2 w-full w-max">
-                                <p className="flex w-full gap-1 lg:w-auto lg:pr-6 xl:pr-10 lg:flex-col">
-                                    <span className="flex items-center space-x-1 text-sm font-medium lg:order-2 whitespace-nowrap">
-                                        <span>{detail1}</span>
-                                        <span className="text-xs font-light text-gray-500 lg:hidden">{detail1Label}</span>
-                                    </span>
-                                    <span className="hidden text-xs font-light text-gray-500 lg:block">{detail1Label}</span>
-                                </p>
+                        <div className="flex flex-col details-container gap-2">
+                            <div className='flex items-start flex-col'>
+                                <span className='text-xs text-gray-500 detail-label'>{detail1Label}</span>
+                                <span>{detail1}</span>
                             </div>
-                            {detail2 && (
-                                <div className="detail2-container flex flex-col lg:flex-row items-start gap-1.5 lg:gap-0 text-xs lg:text-sm text-gray-600 font-medium lg:pb-2 w-max">
-                                    <p className="flex w-full gap-1 lg:w-auto lg:pr-6 xl:pr-10 lg:flex-col">
-                                        <span className="flex items-center space-x-1 text-sm font-medium lg:order-2 whitespace-nowrap">
-                                            <span>{detail2}</span>
-                                            <span className="text-xs font-light text-gray-500 lg:hidden">{detail2Label}</span>
-                                        </span>
-                                        <span className="hidden text-xs font-light text-gray-500 lg:block">{detail2Label}</span>
-                                    </p>
-                                </div>
-                            )}
+
+                            {
+                                detail2 && (
+                                    <div className='flex items-start flex-col'>
+                                        <span className='text-xs text-gray-500 detail-label'>{detail2Label}</span>
+                                        <span>{detail2}</span>
+                                    </div>
+                                )
+                            }
                         </div>
 
                         <div className="mt-2 text-xs text-gray-700 description-container" style={{ maxWidth: '100%' }}>

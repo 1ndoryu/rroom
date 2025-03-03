@@ -1,4 +1,5 @@
 // resources/js/Pages/Content/components/SearchWithCustomFilter.jsx
+'use client'
 import './SearchWithCustomFilter.css';
 
 // Components

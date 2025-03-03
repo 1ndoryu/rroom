@@ -65,3 +65,31 @@
 
 /* DROP DOWN */
 
+@media (max-width: 668px) {
+    .s-custom-filter {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .s-custom-container svg {
+        width: 20px;
+        height: auto;
+    }
+
+    .s-custom-container {
+        flex-wrap: wrap;
+    }
+
+    .all-filters {
+        gap: 2.5rem;
+    }
+
+    .s-filter-dropdown {
+        padding: .4rem  .9rem;
+    }
+
+    .s-filter-trigger p {
+        font-size: .9rem;
+    }
+}
+
