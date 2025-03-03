@@ -154,7 +154,6 @@ function CreateProfile() {
                             setData={setData}
                             name="can_be_contacted"
                             label="Allow Contact"
-                            description="Allow other users to message you."
                         />
                         {/*  USAR SelectField AQUI */}
                         <SelectField
@@ -253,7 +252,7 @@ function CreateProfile() {
                     />
 
                     {RenderSectionTitle('Contact Information')}
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 flex align-end items-end">
+                    <div className="flex grid items-end grid-cols-1 gap-4 md:grid-cols-2 align-end">
                         <InputField
                             data={data}
                             setData={setData}
@@ -266,7 +265,6 @@ function CreateProfile() {
                             setData={setData}
                             name="phone_number_public"
                             label="Public Phone Number"
-                            description="Make your phone number visible to others."
                             adaptive={true}
                         />
                     </div>

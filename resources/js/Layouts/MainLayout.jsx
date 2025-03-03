@@ -20,6 +20,19 @@ function AuthNavbar({ user }) {
 
     return (
         <div className="flex items-stretch justify-between w-full">
+            {/*
+            
+            display: flex;
+            align-items: center;
+            margin-bottom: -4px;
+            padding: 5px;
+
+            */}
+            <div className='flex items-center ml-auto mb-[-4px] p-1'>
+                <Button className="border-none hover:bg-transparent" variant="outline" onClick={() => router.visit('/rooms')}>
+                    My rooms
+                </Button>
+            </div>
             <div id="sr" className="absolute z-50 w-full max-w-md -translate-x-1/2 top-3 left-1/2">
                 <form className="flex items-center" onSubmit={handleSearch}>
                     <input
