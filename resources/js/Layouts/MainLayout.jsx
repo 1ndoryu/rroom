@@ -26,7 +26,7 @@ function AuthNavbar({ user }) {
                     <input
                         type="text"
                         placeholder="Search..."
-                        className="w-full px-3 py-1 text-sm bg-white border rounded-full focus:outline-none focus:ring-2 focus:ring-gray-400"
+                        className="w-full px-3 py-1 text-sm bg-white border rounded-full focus:outline-none focus:ring-2 focus:ring-gray-400 max-[768px]:hidden  "
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
