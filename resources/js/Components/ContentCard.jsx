@@ -17,7 +17,7 @@ function ContentCard({ item }) {
 
     return (
         <Link href={route('content.show', { type: item.type, id: item.id })}>
-            <div className="relative transition duration-200 transform bg-white border border-gray-200 rounded-lg cursor-pointer content-card">
+            <div className="relative transition duration-200 transform bg-white border border-gray-200 rounded-lg cursor-pointer content-card hover:shadow-lg transition-all duration-200 hover:scale-105">
                 {/* ... resto del código de la tarjeta ... */}
                 <div className="flex">
                     <div className="image-container relative w-[300px] max-[1268px]:w-[400px] bg-slate-100" style={{ borderRadius: '5px 0px 0px', overflow: 'hidden' }}>
