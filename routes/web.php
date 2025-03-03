@@ -3,20 +3,23 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoomController;
-use App\Http\Controllers\HomeController; // Importante importar
+use App\Http\Controllers\HomeController; 
 use Inertia\Inertia;
 use App\Http\Controllers\UserProfilesController;
 use App\Http\Controllers\ContentController;
 
 
 
-// Ruta para la página de inicio (usando HomeController)
+
+
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Rutas para las habitaciones (usando resource controller)
-Route::resource('rooms', RoomController::class)->middleware('auth'); // Todas las rutas de rooms requieren autenticación
-Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index'); // index no require auth
+Route::resource('rooms', RoomController::class)->middleware('auth'); 
+Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
+
 Route::get('/content', [ContentController::class, 'index'])->name('content.index');
+Route::get('/content/{type}/{id}', [ContentController::class, 'show'])->name('content.show');
 
 // Rutas del dashboard y perfil (se mantienen igual)
 Route::get('/dashboard', function () {
