@@ -8,28 +8,24 @@
 [x] El usuario tiene que poder publicarse.
 [x] Los usuarios que buscan, tiene que visualizar los roomate publicados.
 [x] Que el buscador funciones
+
 [ ] Single Post de room
 [ ] Single post de roommate
 [ ] Poder enviar mensajes a los roomates
 
 # Front
 [ ] Arreglar imagen de perfil en el formulario de creacion
-[ ] Arreglar detalles visuales en los formularios
-[ ] Mejorar presentacion pagina de inicio 
+[x] Arreglar detalles visuales en los formularios
+[?] Mejorar presentacion pagina de inicio 
 [ ] El buscandor en el menu se rompe cuando la pantalla se hace pequeña
-[ ] Componente en content de que filtra la busqueda entre rooms, roommates y pg con dropdown de genero
+[x] Componente en content de que filtra la busqueda entre rooms, roommates y pg con dropdown de genero
 [ ] Mejora aspecto de los ContentCards
 
 # Para despues...
+[ ] Sistema de filtros
 [ ] Campo de Looking in... debe mostrar ubicaciones
 [ ] Campo de Adress debe mostrar ubicaciones
-<<<<<<< HEAD
 
-#Algunas dudas que aclarar.
-
-=======
->>>>>>> d93c62f47cdd6102b17bdbf0a9acf59dcdf90684
-#
 
 # Publicaciones de espacios disponibles (habitaciones, pisos completos, camas en hostels, etc.)
 

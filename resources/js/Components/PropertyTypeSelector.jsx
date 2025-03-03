@@ -29,8 +29,8 @@ function PropertyTypeSelector({ data, setData, name }) {
                             className={`
                                 relative flex flex-col items-center cursor-pointer rounded-lg border border-gray-200 bg-white py-4
                                 focus:outline-none text-gray-500
-                                has-[:focus]:ring-2 has-[:focus]:ring-offset-2 has-[:focus]:ring-orange-500/25 has-[:focus]:border-orange-500
-                                has-[:checked]:ring-2 has-[:checked]:ring-offset-2 has-[:checked]:ring-orange-500/25 has-[:checked]:border-orange-500 has-[:checked]:text-orange-500 w-[110px]
+                                has-[:focus]:ring-2 has-[:focus]:ring-offset-2 
+                                has-[:checked]:ring-2 has-[:checked]:ring-offset-2 w-[110px]
                             `}
                         >
                             <input

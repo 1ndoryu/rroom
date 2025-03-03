@@ -89,30 +89,23 @@ function CreateProfile() {
     const RenderSectionTitle = ({ title }) => {
         return (
             <div className="py-2">
-                <h3 className="border-b-2 border-gray-200 pb-1 text-xl font-semibold">
-                    {title}
-                </h3>
+                <h3 className="pb-1 text-xl font-semibold border-b-2 border-gray-200">{title}</h3>
             </div>
         );
     };
 
     return (
         <MainLayout auth={auth}>
-            <div className="mx-auto mt-10 max-w-3xl rounded-lg border p-6 pt-10">
+            <div className="max-w-3xl p-6 pt-10 mx-auto mt-10 border rounded-lg">
                 <Head title="Create New Profile" />
                 <form onSubmit={onSubmit} className="space-y-6">
                     {/* Muestra errores de Inertia (si los hay) */}
                     {Object.keys(formErrors).length > 0 && (
-                        <div
-                            className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-800"
-                            role="alert"
-                        >
-                            <ul className="ml-4 mt-1.5 list-inside list-disc">
-                                {Object.values(formErrors).map(
-                                    (error, index) => (
-                                        <li key={index}>{error}</li>
-                                    ),
-                                )}
+                        <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
+                            <ul className="mt-1.5 ml-4 list-disc list-inside">
+                                {Object.values(formErrors).map((error, index) => (
+                                    <li key={index}>{error}</li>
+                                ))}
                             </ul>
                         </div>
                     )}
@@ -177,7 +170,6 @@ function CreateProfile() {
                             setData={setData}
                             name="can_be_contacted"
                             label="Allow Contact"
-                            description="Allow other users to message you."
                         />
                         {/*  USAR SelectField AQUI */}
                         <SelectField
@@ -287,7 +279,7 @@ function CreateProfile() {
                     />
 
                     {RenderSectionTitle('Contact Information')}
-                    <div className="align-end flex grid grid-cols-1 items-end gap-4 md:grid-cols-2">
+                    <div className="flex grid items-end grid-cols-1 gap-4 md:grid-cols-2 align-end">
                         <InputField
                             data={data}
                             setData={setData}
@@ -300,7 +292,6 @@ function CreateProfile() {
                             setData={setData}
                             name="phone_number_public"
                             label="Public Phone Number"
-                            description="Make your phone number visible to others."
                             adaptive={true}
                         />
                     </div>
