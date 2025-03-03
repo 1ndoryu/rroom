@@ -33,13 +33,13 @@ export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.jsx'],
-            ssr: 'resources/js/ssr.jsx', //  <--  AÑADE ESTO
+            ssr: 'resources/js/ssr.jsx',
             refresh: true,
         }),
         react(),
     ],
     resolve: {
-        //  <--  ASEGÚRATE DE QUE ESTÉ ASÍ
+
         alias: {
             '@': path.resolve(__dirname, 'resources/js'),
             '@svgs': path.resolve(__dirname, 'resources/assets/svgs'),
@@ -48,7 +48,7 @@ export default defineConfig({
         },
     },
     ssr: {
-        // <--  Y ESTO TAMBIÉN
+
         noExternal: ['@inertiajs/react'],
     },
 });
