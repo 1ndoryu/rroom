@@ -1,0 +1,15 @@
+.button-close-upload {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    cursor: pointer;
+}
+
+.button-close-upload svg {
+    width: 30px;
+    height: auto;
+}
+
+.c-image img {
+    border: 1px solid #ccc;
+}

@@ -2,6 +2,7 @@
 
 'use client';
 
+import './decoration-bg.css'
 import React, { useState } from 'react'; // Importa useState
 import { Link, router } from '@inertiajs/react';
 import { Button } from '@/Components/ui/button';
@@ -38,7 +39,7 @@ function AuthNavbar({ user }) {
                     <input
                         type="text"
                         placeholder="Search..."
-                        className="w-full px-3 py-1 text-sm bg-white border rounded-full focus:outline-none focus:ring-2 focus:ring-gray-400"
+                        className="w-full px-3 py-1 text-sm bg-white border rounded-full focus:outline-none focus:ring-2 focus:ring-gray-400 max-[768px]:hidden  "
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -86,14 +87,13 @@ export default function MainLayout({ children, auth }) {
     const containerClasses = auth?.user
         ? "flex flex-col min-h-screen"
         : "flex flex-col min-h-screen";
-
     return (
         <>
             <Head>
                 <link rel="stylesheet" href="/css/all.css" />
             </Head>
             <div className={containerClasses}>
-                <nav className="relative bg-white border-b border-gray-200 h-14">
+                <nav className="bg-white border-b border-gray-200 h-14 w-full">
                     <div className="container flex items-stretch h-full px-4 mx-auto">
                         <div className='flex items-center'>
                             <Link href="/" className="text-xl font-bold">
@@ -104,7 +104,7 @@ export default function MainLayout({ children, auth }) {
                     </div>
                 </nav>
 
-                <main className="container flex-grow px-4 py-8 mx-auto">
+                <main className="container ly-decoration flex-grow px-4 py-8 mx-auto">
                     {children}
                 </main>
             </div>

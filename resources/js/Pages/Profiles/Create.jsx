@@ -1,13 +1,12 @@
 // resources/js/Pages/Profiles/Create.jsx
-import React from 'react';
-import { useForm, Head, usePage } from '@inertiajs/react';
-import { Button } from "@/Components/ui/button";
-import InputField from '@/Components/InputField';
 import CheckboxField from '@/Components/CheckboxField';
-import MainLayout from '@/Layouts/MainLayout';
+import ImageUpload from '@/Components/ImageUpload';
+import InputField from '@/Components/InputField';
 import SelectField from '@/Components/SelectField';
 import TextareaField from '@/Components/TextareaField';
-import ImageUpload from '@/Components/ImageUpload';
+import { Button } from '@/Components/ui/button';
+import MainLayout from '@/Layouts/MainLayout';
+import { Head, useForm, usePage } from '@inertiajs/react';
 
 function CreateProfile() {
     const { errors, auth, userProfile } = usePage().props;
@@ -31,18 +30,29 @@ function CreateProfile() {
         children_friendly: userProfile?.children_friendly ?? false,
         student_friendly: userProfile?.student_friendly ?? false,
         senior_friendly: userProfile?.senior_friendly ?? false,
-        requires_background_check: userProfile?.requires_background_check ?? false,
+        requires_background_check:
+            userProfile?.requires_background_check ?? false,
         description: userProfile?.description || '',
         phone_number: userProfile?.phone_number || '',
         phone_number_public: userProfile?.phone_number_public ?? false,
         images: null, //  <--  CAMBIO AQUÍ:  Debe ser null inicialmente.
     };
 
-    const { data, setData, post, processing, reset, errors: formErrors } = useForm(initialData);
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        reset,
+        errors: formErrors,
+    } = useForm(initialData);
 
     const onSubmit = (e) => {
         e.preventDefault();
-        console.log('CreateProfile:onSubmit - Iniciando envío del formulario', data);
+        console.log(
+            'CreateProfile:onSubmit - Iniciando envío del formulario',
+            data,
+        );
 
         // 2. Usa FormData para enviar archivos correctamente:
         const formData = new FormData();
@@ -55,17 +65,21 @@ function CreateProfile() {
             }
         }
 
-
         post(route('profiles.store'), {
-            data: formData,  // <-- Envía el FormData.
+            data: formData, // <-- Envía el FormData.
             onSuccess: () => {
-                console.log('CreateProfile:onSubmit - Perfil creado con éxito.');
+                console.log(
+                    'CreateProfile:onSubmit - Perfil creado con éxito.',
+                );
                 // No llames a reset() aquí.  Deja los datos en el formulario
                 // para que el usuario pueda ver que se guardaron correctamente.
                 // reset();  // <--  Quita esto.
             },
             onError: (errors) => {
-                console.error('CreateProfile:onSubmit - Error al crear el perfil:', errors);
+                console.error(
+                    'CreateProfile:onSubmit - Error al crear el perfil:',
+                    errors,
+                );
             },
             // Importante para enviar archivos:
             forceFormData: true, // <--  AÑADE ESTO.
@@ -77,7 +91,7 @@ function CreateProfile() {
             <div className="py-2">
                 <h3 className="pb-1 text-xl font-semibold border-b-2 border-gray-200">{title}</h3>
             </div>
-        )
+        );
     };
 
     return (
@@ -102,15 +116,17 @@ function CreateProfile() {
                             setData={setData}
                             name="images"
                             // Pasa la URL completa, no relativa.
-                            initialImage={userProfile?.profile_image ? `${window.location.origin}/storage/${userProfile.profile_image}` : null}
-                            maxImages={1}  // <--  SOLO 1 IMAGEN.
-
+                            initialImage={
+                                userProfile?.profile_image
+                                    ? `${window.location.origin}/storage/${userProfile.profile_image}`
+                                    : null
+                            }
+                            maxImages={1}
                         />
                         {/* Ya no necesitas mostrar la imagen aquí, ImageUpload lo hace. */}
                     </div>
 
-
-                    <RenderSectionTitle title={'Personal Information'}/>
+                    <RenderSectionTitle title={'Personal Information'} />
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <InputField
                             data={data}
@@ -147,7 +163,7 @@ function CreateProfile() {
                         />
                     </div>
 
-                    <RenderSectionTitle title={'Contact & Preferences'}/>
+                    <RenderSectionTitle title={'Contact & Preferences'} />
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <CheckboxField
                             data={data}
@@ -162,9 +178,15 @@ function CreateProfile() {
                             name="team_up"
                             label="Team Up"
                             options={[
-                                { value: 'looking', label: 'Looking for Team Ups' },
+                                {
+                                    value: 'looking',
+                                    label: 'Looking for Team Ups',
+                                },
                                 { value: 'open', label: 'Open to Team Ups' },
-                                { value: 'not_interested', label: 'Not Interested in Team Ups' },
+                                {
+                                    value: 'not_interested',
+                                    label: 'Not Interested in Team Ups',
+                                },
                             ]}
                         />
 
@@ -187,7 +209,6 @@ function CreateProfile() {
                         />
                     </div>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-
                         <SelectField
                             data={data}
                             setData={setData}
@@ -208,12 +229,19 @@ function CreateProfile() {
                         />
                     </div>
 
-
-                    <RenderSectionTitle title={'Preferences'}/>
+                    <RenderSectionTitle title={'Preferences'} />
                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                         {[
-                            { name: 'lgbt_friendly', label: 'LGBT+', icon: '🏳️‍🌈' },
-                            { name: 'cannabis_friendly', label: 'Cannabis', icon: '🌲' },
+                            {
+                                name: 'lgbt_friendly',
+                                label: 'LGBT+',
+                                icon: '🏳️‍🌈',
+                            },
+                            {
+                                name: 'cannabis_friendly',
+                                label: 'Cannabis',
+                                icon: '🌲',
+                            },
                             { name: 'cat_friendly', label: 'Cats', icon: '🐱' },
                             { name: 'dog_friendly', label: 'Dogs', icon: '🐶' },
                             { name: 'children_friendly', label: 'Children' },
@@ -240,8 +268,7 @@ function CreateProfile() {
                         />
                     </div>
 
-
-                    <RenderSectionTitle title={'About You'}/>
+                    <RenderSectionTitle title={'About You'} />
                     <TextareaField
                         data={data}
                         setData={setData}
@@ -269,7 +296,11 @@ function CreateProfile() {
                         />
                     </div>
 
-                    <Button type="submit" className="w-full p-3 text-white rounded-md bg-[--black] hover:border hover:bg-[--white]" disabled={processing}>
+                    <Button
+                        type="submit"
+                        className="w-full rounded-md bg-[--black] p-3 text-white hover:border hover:bg-[--white]"
+                        disabled={processing}
+                    >
                         {processing ? 'Creating...' : 'Create Profile'}
                     </Button>
                 </form>
