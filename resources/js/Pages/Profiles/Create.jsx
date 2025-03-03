@@ -72,11 +72,13 @@ function CreateProfile() {
         });
     };
 
-    const renderSectionTitle = (title) => (
-        <div className="py-2">
-            <h3 className="pb-1 text-xl font-semibold border-b-2 border-gray-200">{title}</h3>
-        </div>
-    );
+    const RenderSectionTitle = ({ title }) => {
+        return (
+            <div className="py-2">
+                <h3 className="pb-1 text-xl font-semibold border-b-2 border-gray-200">{title}</h3>
+            </div>
+        )
+    };
 
     return (
         <MainLayout auth={auth}>
@@ -108,7 +110,7 @@ function CreateProfile() {
                     </div>
 
 
-                    {renderSectionTitle('Personal Information')}
+                    <RenderSectionTitle title={'Personal Information'}/>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <InputField
                             data={data}
@@ -145,7 +147,7 @@ function CreateProfile() {
                         />
                     </div>
 
-                    {renderSectionTitle('Contact & Preferences')}
+                    <RenderSectionTitle title={'Contact & Preferences'}/>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <CheckboxField
                             data={data}
@@ -208,7 +210,7 @@ function CreateProfile() {
                     </div>
 
 
-                    {renderSectionTitle('Preferences')}
+                    <RenderSectionTitle title={'Preferences'}/>
                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                         {[
                             { name: 'lgbt_friendly', label: 'LGBT+', icon: '🏳️‍🌈' },
@@ -229,7 +231,7 @@ function CreateProfile() {
                         ))}
                     </div>
 
-                    {renderSectionTitle('Extra Requirements')}
+                    {RenderSectionTitle('Extra Requirements')}
                     <div className="grid grid-cols-1 gap-4">
                         <CheckboxField
                             data={data}
@@ -240,7 +242,7 @@ function CreateProfile() {
                     </div>
 
 
-                    {renderSectionTitle('About You')}
+                    <RenderSectionTitle title={'About You'}/>
                     <TextareaField
                         data={data}
                         setData={setData}
@@ -250,8 +252,8 @@ function CreateProfile() {
                         minLength={75}
                     />
 
-                    {renderSectionTitle('Contact Information')}
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    {RenderSectionTitle('Contact Information')}
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 flex align-end items-end">
                         <InputField
                             data={data}
                             setData={setData}
@@ -265,6 +267,7 @@ function CreateProfile() {
                             name="phone_number_public"
                             label="Public Phone Number"
                             description="Make your phone number visible to others."
+                            adaptive={true}
                         />
                     </div>
 
