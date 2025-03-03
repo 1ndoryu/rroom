@@ -1,0 +1,10 @@
+:root {
+    --hdr-gradient: radial-gradient(farthest-corner circle at 50% 115% in oklch,
+    oklch(100% 0.24 169) 0%, 17%, oklch(100% 0.00 272) 94% 94%);
+    --sdr-gradient: radial-gradient(farthest-corner circle at 50% 115%,
+    #00ffe3 0%, 17%, #fff 96% 96%);
+}
+
+.ly-decoration {
+    background: radial-gradient(farthest-corner circle at 50% 115%, #95b6e2 0%, 17%, #fff 96% 96%);
+}
