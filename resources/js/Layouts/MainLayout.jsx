@@ -13,23 +13,40 @@ function AuthNavbar({ user }) {
     const userName = user?.name || '';
     const initials = userName.substring(0, 2).toUpperCase();
     const [searchTerm, setSearchTerm] = useState('');
+    const [isSearchOpen, setSearchOpen] = useState(false);
 
     const handleSearch = (event) => {
         event.preventDefault();
         router.get('/content', { search: searchTerm }, { replace: true, preserveState: true });
     };
 
+    const handleSearchClose = () => {
+        setSearchOpen(!isSearchOpen);
+        console.log(isSearchOpen)
+        setSearchTerm('');
+    };
+
     return (
         <div className="flex items-stretch justify-between w-full">
             <div id="sr" className="absolute z-50 w-full max-w-md -translate-x-1/2 top-3 left-1/2">
-                <form className="flex items-center" onSubmit={handleSearch}>
+                <form className="flex items-center relative" onSubmit={handleSearch}>
                     <input
                         type="text"
-                        placeholder="Search..."
-                        className="w-full px-3 py-1 text-sm bg-white border rounded-full focus:outline-none focus:ring-2 focus:ring-gray-400 max-[768px]:hidden  "
+                        placeholder="Search rooms, roommates..."
+                        className="w-full px-3 py-1 text-sm bg-white border rounded-full focus:outline-none focus:ring-2 focus:ring-gray-400 max-[768px]:hidden"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
+
+                    <div className='flex items-center justify-center w-full min-[768px]:hidden'>
+                        <input
+                            type="text"
+                            placeholder="Search rooms, roommates..."
+                            className={`search-cn ${isSearchOpen ? 'search-cn-open' : ''} w-[85%] px-3 py-1 text-sm bg-white border rounded-full focus:outline-none focus:ring-2 focus:ring-gray-400 min-[768px]:hidden`}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                    </div>
                 </form>
             </div>
 
@@ -44,6 +61,11 @@ function AuthNavbar({ user }) {
                         <Button variant="ghost" size="icon">
                             <i className="fa-regular fa-comment"></i>
                         </Button>
+                        <span className='max-[768px]:block min-[768px]:hidden' onClick={() => handleSearchClose()}>
+                            <Button variant="ghost" size="icon">
+                                <i className="fa-solid fa-magnifying-glass"></i>
+                            </Button>
+                        </span>
                     </div>
                     <div className="flex items-center">
                         <Avatar>

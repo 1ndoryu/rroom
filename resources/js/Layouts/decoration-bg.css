@@ -5,6 +5,23 @@
     #00ffe3 0%, 17%, #fff 96% 96%);
 }
 
-.ly-decoration {
-    
+.search-cn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    transform: translateY(-150%);
+    top: 60px;
+    opacity: 0;
+    transition: .3s ease-in-out;
+    position: fixed;
+    pointer-events: none;
 }
+
+.search-cn-open {
+    opacity: 1;
+    transform: translateY(0);
+    transition: .3s ease-in-out;
+    pointer-events: all;
+}
+
