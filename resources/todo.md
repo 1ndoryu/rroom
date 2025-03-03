@@ -16,6 +16,7 @@
 [ ] Arreglar imagen de perfil en el formulario de creacion
 [ ] Arreglar detalles visuales en los formularios
 [ ] Mejorar presentacion pagina de inicio 
+[ ] El buscandor en el menu se rompe cuando la pantalla se hace pequeña
 [ ] Componente en content de que filtra la busqueda entre rooms, roommates y pg con dropdown de genero
 [ ] Mejora aspecto de los ContentCards
 
