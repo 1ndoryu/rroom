@@ -46,14 +46,15 @@ function Home({ rooms }) {
             {/* Sección para usuarios autenticados */}
             {auth.user && (
                 <div className="flex flex-col items-center justify-center min-h-[60vh]">
-                    <div className="text-center">
+                    <div className="text-center relative">
                         <h1 className="text-6xl font-bold leading-tight text-[--black]">
                             Welcome Back!
                         </h1>
-                        <p className="mt-3 text-[--grey]">
+                        <p className="mt-1 text-[--grey]">
                             Find your perfect roommate or list your room.
                         </p>
                     </div>
+                    
                     <div className="w-full max-w-md mt-8">
                         <div className="flex justify-center space-x-4">
                             <Button asChild variant="secondary" size="lg">

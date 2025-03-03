@@ -16,8 +16,6 @@
 [ ] Campo de Looking in... debe mostrar ubicaciones
 [ ] Campo de Adress debe mostrar ubicaciones
 
-
-
 #Algunas dudas que aclarar.
 
 #
