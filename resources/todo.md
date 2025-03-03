@@ -19,14 +19,9 @@
 [ ] Componente en content de que filtra la busqueda entre rooms, roommates y pg con dropdown de genero
 [ ] Mejora aspecto de los ContentCards
 
-#
+# Para despues...
 [ ] Campo de Looking in... debe mostrar ubicaciones
 [ ] Campo de Adress debe mostrar ubicaciones
-
-
-
-#Algunas dudas que aclarar.
-
 #
 
 # Publicaciones de espacios disponibles (habitaciones, pisos completos, camas en hostels, etc.)
