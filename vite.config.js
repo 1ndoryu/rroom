@@ -3,14 +3,12 @@ import laravel from 'laravel-vite-plugin';
 import path from 'path';
 import { defineConfig } from 'vite';
 
-const baseUrl = process.env.APP_ENV === 'production' ? '/rroom/' : '/'; // Correcto
-
 export default defineConfig({
-    base: baseUrl,  // Correcto
+    base: process.env.APP_URL, // Usa APP_URL directamente.  ¡Mucho más limpio!
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.jsx'],
-            ssr: 'resources/js/ssr.jsx', //  Considera si realmente necesitas SSR
+            ssr: 'resources/js/ssr.jsx',
             refresh: true,
         }),
         react(),
@@ -18,19 +16,16 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': path.resolve(__dirname, 'resources/js'),
-            '@svgs': path.resolve(__dirname, 'resources/assets/svgs'),  // Asumiendo que tienes esta carpeta
-            'ziggy-vue': path.resolve('vendor/tightenco/ziggy/dist/vue.es.js'), // Solo si usas Vue *y* Ziggy
-            ziggy: path.resolve('vendor/tightenco/ziggy/dist'), // Solo si usas Ziggy
+            '@svgs': path.resolve(__dirname, 'resources/assets/svgs'), // Si tienes la carpeta
+            'ziggy-vue': path.resolve('vendor/tightenco/ziggy/dist/vue.es.js'),  //Si usas vue
+            ziggy: path.resolve('vendor/tightenco/ziggy/dist'),//Si usas ziggy
         },
     },
     ssr: {
         noExternal: ['@inertiajs/react'], // Solo si usas SSR
     },
-    //  SIMPLIFICACIÓN DRÁSTICA del servidor de desarrollo
     server: {
-        host: 'localhost', //  Usa localhost directamente
-        port: 5173,       //  Puerto por defecto
-        //  https: false,   //  ¡No necesitamos HTTPS en desarrollo!
-        //  hmr: false,     //  HMR suele funcionar bien por defecto.  Quítalo a menos que tengas problemas *específicos* con HMR.
+        host: 'localhost',
+        port: 5173,
     },
 });
