@@ -1,19 +1,20 @@
-// vite.config.js
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import laravel from 'laravel-vite-plugin';
-import path from 'path'; // Importa 'path'
+import path from 'path';
 import { defineConfig } from 'vite';
 
-// Para producción usamos el dominio real
+// --- Configuración de la base URL ---
 const isProduction = process.env.APP_ENV === 'production';
+const baseUrl = isProduction ? '/rroom/' : '/';  // <--- ¡CLAVE!
+
+// --- Configuración del host y HTTPS ---
 const host = isProduction ? 'wandori.us' : process.env.APP_HOST || 'localhost';
 const useHttps = isProduction;
 
 let serverConfig = {
     host,
     port: 5173,
-    // Si estamos en producción, deshabilitamos HMR para que no se intente conectarse vía WebSocket
     hmr: isProduction
         ? false
         : {
@@ -24,12 +25,14 @@ let serverConfig = {
 
 if (useHttps) {
     serverConfig.https = {
-        key: fs.readFileSync(`/etc/letsencrypt/live/wandori.us/privkey.pem`),
-        cert: fs.readFileSync(`/etc/letsencrypt/live/wandori.us/fullchain.pem`),
+        //  Ajuste para rutas relativas en producción, si es necesario.
+        key: isProduction ? fs.readFileSync('/etc/letsencrypt/live/wandori.us/privkey.pem') : null, //No necesitamos el certificado cuando es development
+        cert: isProduction ? fs.readFileSync('/etc/letsencrypt/live/wandori.us/fullchain.pem') : null,
     };
 }
 
 export default defineConfig({
+    base: baseUrl,  // <--- ¡Añadido aquí!
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.jsx'],
@@ -39,7 +42,6 @@ export default defineConfig({
         react(),
     ],
     resolve: {
-
         alias: {
             '@': path.resolve(__dirname, 'resources/js'),
             '@svgs': path.resolve(__dirname, 'resources/assets/svgs'),
@@ -48,7 +50,6 @@ export default defineConfig({
         },
     },
     ssr: {
-
         noExternal: ['@inertiajs/react'],
     },
 });

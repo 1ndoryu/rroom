@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class ContentController extends Controller
 {
-    // ... tu método index existente ...
+
     public function index(Request $request)
     {
         Log::info('ContentController:index - Iniciando la función index.');
@@ -92,6 +92,7 @@ class ContentController extends Controller
                 'gender' => $profile->gender,
                 'description' => $profile->description,
                 'type' => 'profile',
+                'looking_in' => $profile->looking_in, // AÑADIDO: Incluir looking_in del perfil
             ];
             Log::info('ContentController:index - Datos de perfil procesados:', ['profile' => $profileData]);
             return $profileData;

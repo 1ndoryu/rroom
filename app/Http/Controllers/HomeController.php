@@ -9,7 +9,7 @@ use Inertia\Inertia;
 use App\Models\Room;
 use App\Models\UserProfile;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage; // Importa la clase Storage
+use Illuminate\Support\Facades\Storage; 
 
 
 class HomeController extends Controller
@@ -31,7 +31,6 @@ class HomeController extends Controller
                 ],
                 'imageUrls' => $room->images->map(fn($image) => $image->url)->toArray(),
                 'address' => $room->address,
-
                 'rent' => $room->rent,
                 'preferred_gender' => $room->preferred_gender,
                 'description' => $room->description,
@@ -60,6 +59,7 @@ class HomeController extends Controller
                 'budget' => $profile->budget,
                 'description' => $profile->description,
                 'type' => 'profile',
+                'looking_in' => $profile->looking_in, // AÑADIDO: Incluir looking_in del perfil
             ];
             Log::info('HomeController:index - Datos de perfil procesados:', ['profile' => $profileData]);
             return $profileData;
@@ -70,7 +70,7 @@ class HomeController extends Controller
         Log::info('HomeController:index - Contenido combinado y limitado:', ['combinedData' => $combinedData]);
 
         return Inertia::render('Home', [
-            'rooms' => $combinedData,
+            'rooms' => $combinedData, // NOTA: Aquí la variable se llama 'rooms' en lugar de 'content'
         ]);
     }
 }
