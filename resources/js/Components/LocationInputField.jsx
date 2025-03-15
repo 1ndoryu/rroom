@@ -1,7 +1,6 @@
 // /Components/LocationInputField.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import InputField from '@/Components/InputField';
-import { Label } from "@/components/ui/label";
 import { cities } from '@/data/cities';
 
 function LocationInputField({ data, setData, name, label, placeholder, isLocationSpecific, allowMultipleCities = false, ...props }) {
