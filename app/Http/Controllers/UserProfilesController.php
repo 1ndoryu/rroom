@@ -29,12 +29,12 @@ class UserProfilesController extends Controller
             'age' => 'required|integer|min:18',
             'gender' => 'required|string|in:male,female,other',
             'short_description' => 'required|string|max:255',
-            'looking_in' => 'required|string|max:255',
+            // MODIFICACIÓN AQUÍ:  Acepta string o array.
+            'looking_in' => 'required|max:255', //Quitar string
             'budget' => 'required|numeric|min:0',
             'ready_to_move' => 'required|date',
             'description' => 'required|string|min:75',
             'phone_number' => 'nullable|string|max:20',
-            // Valida SOLO UNA imagen.  'images' ahora es un único archivo, no un array.
             'images' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'can_be_contacted' => 'boolean',
             'team_up' => 'nullable|string|in:looking,open,not_interested',
@@ -48,15 +48,20 @@ class UserProfilesController extends Controller
             'senior_friendly' => 'boolean',
             'requires_background_check' => 'boolean',
             'phone_number_public' => 'boolean',
-
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-
         // --- Preparación de los datos ---
+        $profileData = $validator->validated(); // Usar los datos validados.
+
+        // MODIFICACIÓN AQUÍ:  Convierte a string si es array.
+        if (is_array($profileData['looking_in'])) {
+            $profileData['looking_in'] = implode(', ', $profileData['looking_in']);
+        }
+
         $profileData = [
             'name' => $request->name,
             'age' => $request->age,
@@ -64,7 +69,7 @@ class UserProfilesController extends Controller
             'short_description' => $request->short_description,
             'can_be_contacted' => (bool) $request->can_be_contacted,
             'team_up' => $request->team_up,
-            'looking_in' => $request->looking_in,
+            'looking_in' => $profileData['looking_in'], // Usar la variable modificada
             'budget' => $request->budget,
             'accommodation_for' => $request->accommodation_for,
             'ready_to_move' => $request->ready_to_move,
@@ -79,37 +84,33 @@ class UserProfilesController extends Controller
             'description' => $request->description,
             'phone_number' => $request->phone_number,
             'phone_number_public' => (bool) $request->phone_number_public,
-            // profile_image se añade abajo, después de procesar la imagen (si hay).
+            // profile_image se añade abajo.
         ];
 
         // --- Obtener el perfil existente ---
         $existingProfile = $request->user()->profile;
 
         // --- Procesamiento de la imagen ---
-
-        // 1.  Si se subió una imagen, guárdala y actualiza $profileData.
         if ($request->hasFile('images')) {
             $image = $request->file('images');
-            $path = $image->store('profile_images', 'public'); // Guarda en storage/app/public/profile_images
+            $path = $image->store('profile_images', 'public');
 
-            // Borra la imagen anterior, SI EXISTE.
             if ($existingProfile && $existingProfile->profile_image) {
                 Storage::disk('public')->delete($existingProfile->profile_image);
             }
 
-            $profileData['profile_image'] = $path; // Añade la ruta al array de datos.
-
-        } elseif (!$request->hasFile('images') && $existingProfile && $existingProfile->profile_image){
+            $profileData['profile_image'] = $path;
+        } elseif (!$request->hasFile('images') && $existingProfile && $existingProfile->profile_image) {
             Storage::disk('public')->delete($existingProfile->profile_image);
-			$profileData['profile_image'] = null;
+            $profileData['profile_image'] = null;
         }
-         // --- Crear o actualizar el perfil ---
-        // Usa updateOrCreate para manejar tanto la creación como la actualización.
+
+        // --- Crear o actualizar el perfil ---
         $profile = UserProfile::updateOrCreate(
             ['user_id' => $request->user()->id],
             $profileData
         );
 
-        return Redirect::route('profiles.create')->with('success', 'Perfil creado/actualizado.'); // Mensaje en español
+        return Redirect::route('profiles.create')->with('success', 'Perfil creado/actualizado.');
     }
 }

@@ -7,6 +7,7 @@ import TextareaField from '@/Components/TextareaField';
 import { Button } from '@/Components/ui/button';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, useForm, usePage } from '@inertiajs/react';
+import LocationInputField from '@/Components/LocationInputField';
 
 function CreateProfile() {
     const { errors, auth, userProfile } = usePage().props;
@@ -189,13 +190,14 @@ function CreateProfile() {
                                 },
                             ]}
                         />
-
-                        <InputField
+                        <LocationInputField
                             data={data}
                             setData={setData}
                             name="looking_in"
                             label="Looking In"
-                            placeholder="Enter location"
+                            placeholder="Enter the City"
+                            isLocationSpecific={true}
+                            allowMultipleCities={true}
                         />
                         <InputField
                             data={data}

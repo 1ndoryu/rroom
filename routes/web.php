@@ -8,7 +8,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\UserProfilesController;
 use App\Http\Controllers\ContentController;
 use App\Http\Controllers\MessageController;
-
+use App\Http\Controllers\MyRoomsController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -38,6 +38,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/messages/{user}', [MessageController::class, 'getMessages'])->name('messages.get');
     Route::patch('/messages/{message}/read', [MessageController::class, 'markAsRead'])->name('messages.markAsRead');
     Route::get('/conversations', [MessageController::class, 'getConversations'])->name('conversations.get');
+
+    Route::get('/myrooms', [MyRoomsController::class, 'index'])->name('myrooms.index');
+    Route::delete('/rooms/{room}', [RoomController::class, 'destroy'])->name('rooms.destroy');
     // routes/web.php
 
 

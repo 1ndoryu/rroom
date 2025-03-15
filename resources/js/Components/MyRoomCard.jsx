@@ -1,35 +1,13 @@
-// resources/js/Components/ContentCard.jsx
+// resources/js/Components/MyRoomCard.jsx
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import MessageButton from '@/Components/MessageButton';
 
-function ContentCard({ item }) {
-    const user = item?.user || {};
-    const firstImageUrl = item?.imageUrls?.[0] || item?.profile_image;
-
-    let line1, line2;
-    if (item.type === 'room') {
-        line1 = item.address;
-        line2 = user?.name ?? user?.username ?? 'Unknown User';
-    } else if (item.type === 'profile') {
-        line1 = item.name;
-        line2 = `Looking in: ${item.looking_in}`;
-    } else {
-        line1 = user?.name ?? user?.username ?? 'Unknown User';
-        line2 = item?.address || item?.name;
-    }
-
-    const detail1 = item?.address
-        ? `₹${item?.rent}`
-        : `₹${Math.floor(item?.budget || 0)}`;
-    const detail1Label = item?.address ? "Rent" : "Budget";
-    const detail2 = item?.address ? item?.preferred_gender : item?.gender;
-    const detail2Label = item?.address ? "Preferred Gender" : "Gender";
-    const cardDescription = item?.description;
+function MyRoomCard({ room }) {
+    const firstImageUrl = room.imageUrls?.[0];
 
     return (
-        <div className="relative transition-all duration-200 transform bg-white border border-gray-200 rounded-lg cursor-pointer content-card hover:shadow-lg hover:scale-105">
-            <Link href={route('content.show', { type: item.type, id: item.id })}>
+        <div className="relative transition-all duration-200 transform bg-white border border-gray-200 rounded-lg cursor-pointer hover:shadow-lg hover:scale-105 max-w-[750px]">
+            <Link href={route('content.show', { type: 'room', id: room.id })}>
                 {/* Image Container */}
                 <div className="flex">
                     <div
@@ -39,7 +17,7 @@ function ContentCard({ item }) {
                         <div className="relative h-full image-wrapper" style={{ paddingBottom: '100%' }}>
                             {firstImageUrl ? (
                                 <img
-                                    alt={line1}
+                                    alt={room.address}
                                     src={firstImageUrl}
                                     className="absolute inset-0 object-cover w-full h-full"
                                     style={{ borderRadius: '0px 0px 0px 5px' }}
@@ -53,31 +31,30 @@ function ContentCard({ item }) {
                         {/* Line 1 */}
                         <div className="flex items-center justify-between w-full user-info">
                             <p className="text-base truncate max-w-[170px] md:text-lg text-gray-600 font-medium">
-                                {line1}
+                                {room.address}
                             </p>
-                            <MessageButton userId={user.id} userName={user.name} />
                         </div>
 
                         {/* Line 2 */}
-                        <div className="flex items-start gap-1 pb-4 -ml-1 text-xs text-gray-500 location lg:text-sm">
+                         <div className="flex items-start gap-1 pb-4 -ml-1 text-xs text-gray-500 location lg:text-sm">
                             <p className="w-40 p-[3px] text-xs truncate sm:w-80 md:w-40 lg:w-80">
-                                {line2}
+                                 {room.user?.name ?? room.user?.username ?? 'Unknown User'}
                             </p>
                         </div>
 
                         {/* Details */}
                         <div className="flex flex-row gap-4 details-container">
                             <div className="flex flex-col items-start">
-                                <span className="text-xs text-gray-500 detail-label">{detail1Label}</span>
+                                <span className="text-xs text-gray-500 detail-label">Rent</span>
                                 <span className="flex items-center pt-1 space-x-1 text-sm font-medium text-gray-600 lg:order-2 whitespace-nowrap">
-                                    {detail1}
+                                    ₹{room.rent}
                                 </span>
                             </div>
-                            {detail2 && (
+                            {room.preferred_gender && (
                                 <div className="flex flex-col items-start">
-                                    <span className="text-xs text-gray-500 detail-label">{detail2Label}</span>
+                                    <span className="text-xs text-gray-500 detail-label">Preferred Gender</span>
                                     <span className="flex items-center pt-1 space-x-1 text-sm font-medium text-gray-600 lg:order-2 whitespace-nowrap">
-                                        {detail2}
+                                        {room.preferred_gender}
                                     </span>
                                 </div>
                             )}
@@ -85,13 +62,37 @@ function ContentCard({ item }) {
 
                         {/* Description */}
                         <div className="mt-2 text-xs text-gray-700 description-container" style={{ maxWidth: '100%' }}>
-                            <p className="break-words line-clamp-2">{cardDescription}</p>
+                            <p className="break-words line-clamp-2">{room.description}</p>
                         </div>
                     </div>
                 </div>
             </Link>
+
+            {/* Action Buttons */}
+            <div className="absolute flex space-x-2 bottom-2 right-2">
+                <Link href={route('rooms.edit', room.id)} className="px-3 py-1 text-xs font-medium text-white bg-blue-500 rounded hover:bg-blue-600">
+                    Edit
+                </Link>
+                <button onClick={() => handleDelete(room.id)} className="px-3 py-1 text-xs font-medium text-white bg-red-500 rounded hover:bg-red-600">
+                    Delete
+                </button>
+            </div>
         </div>
     );
+
+    function handleDelete(roomId) {
+        if (confirm('Are you sure you want to delete this room?')) {
+            // Inertia visit for DELETE request
+            Inertia.delete(route('rooms.destroy', roomId), {
+                onSuccess: () => {
+                    console.log("MyRoomCard - handleDelete - Room deleted successfully");
+                },
+                onError: (errors) => {
+                    console.error("MyRoomCard - handleDelete - Error deleting room:", errors);
+                },
+            });
+        }
+    }
 }
 
-export default ContentCard;
+export default MyRoomCard;

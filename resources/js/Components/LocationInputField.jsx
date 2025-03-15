@@ -4,29 +4,46 @@ import InputField from '@/Components/InputField';
 import { Label } from "@/components/ui/label";
 import { cities } from '@/data/cities';
 
-function LocationInputField({ data, setData, name, label, placeholder, isLocationSpecific, ...props }) {
+function LocationInputField({ data, setData, name, label, placeholder, isLocationSpecific, allowMultipleCities = false, ...props }) {
+    const [inputValue, setInputValue] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const suggestionsRef = useRef(null);
     const inputRef = useRef(null);
     const MAX_SUGGESTIONS = 6;
-    const DEBOUNCE_DELAY = 300; // Tiempo de espera en milisegundos (ajusta según necesites)
-    let debounceTimeout; // Variable para almacenar el timeout del debounce
+    const DEBOUNCE_DELAY = 300;
+    let debounceTimeout;
 
     useEffect(() => {
-        if (isLocationSpecific && data[name]) {
-          //  fetchSuggestions(data[name]); //quitar esto para que se ejecute despues del delay
+        if (isLocationSpecific && getSearchQuery(inputValue)) {
             setShowSuggestions(true);
         } else {
             setSuggestions([]);
             setShowSuggestions(false);
         }
-    }, [isLocationSpecific, data[name]]);
+    }, [isLocationSpecific, inputValue]);
+
+    useEffect(() => {
+        if (!allowMultipleCities) {
+            if (data[name]) {
+                setInputValue(data[name]);
+            } else {
+                setInputValue('');
+            }
+        } else {
+            if (data[name] && Array.isArray(data[name])) {
+                setInputValue(data[name].join(', ') + ', ');
+            } else {
+                setInputValue('');
+            }
+        }
+    }, [data[name], name, allowMultipleCities]);
+
 
     const fetchSuggestions = async (query) => {
         if (!query) {
-            clearTimeout(debounceTimeout); // Limpia cualquier timeout anterior
+            clearTimeout(debounceTimeout);
             setSuggestions([]);
             setShowSuggestions(false);
             setLoading(false);
@@ -37,7 +54,7 @@ function LocationInputField({ data, setData, name, label, placeholder, isLocatio
 
         try {
             const filteredCities = cities.filter(city =>
-                city.toLowerCase().includes(query.toLowerCase())
+                city.toLowerCase().includes(query.toLowerCase()) && !getSelectedCitiesArray(inputValue).includes(city)
             ).slice(0, MAX_SUGGESTIONS);
 
             console.log("LocationInputField: fetchSuggestions: Buscando sugerencias para:", query);
@@ -46,7 +63,7 @@ function LocationInputField({ data, setData, name, label, placeholder, isLocatio
             setShowSuggestions(true);
 
         } catch (error) {
-            console.error("LocationInputField: fetchSuggestions: Error fetching suggestions", error);
+            console.error("LocationInputField: fetchSuggestions: Error buscando sugerencias", error);
             setSuggestions([]);
         } finally {
             setLoading(false);
@@ -54,28 +71,71 @@ function LocationInputField({ data, setData, name, label, placeholder, isLocatio
     };
 
     const handleSuggestionClick = (suggestion) => {
-        setData(name, suggestion);
+        if (allowMultipleCities) {
+            const currentInputValue = inputValue;
+            const searchQuery = getSearchQuery(currentInputValue);
+
+            let updatedInputValue = '';
+            if (searchQuery) {
+                // Reemplazar solo la parte de la búsqueda con la sugerencia y añadir ", "
+                const index = currentInputValue.lastIndexOf(searchQuery);
+                updatedInputValue = currentInputValue.substring(0, index) + suggestion + ', ';
+            } else if (currentInputValue.trim() === '') {
+                // Si el input estaba vacío, simplemente empezar con la sugerencia y ", "
+                updatedInputValue = suggestion + ', ';
+            } else {
+                // Caso donde hay texto pero no era parte de una busqueda previa (raro, pero por si acaso)
+                updatedInputValue = currentInputValue + suggestion + ', '; // O decide como quieres manejar este caso
+            }
+
+
+            setInputValue(updatedInputValue);
+            setData(name, getSelectedCitiesArray(updatedInputValue));
+        } else {
+            setData(name, suggestion);
+            setInputValue(suggestion);
+        }
         setSuggestions([]);
         setShowSuggestions(false);
         console.log("LocationInputField: handleSuggestionClick: Sugerencia seleccionada:", suggestion);
     };
 
-    const handleInputChange = (e) => {
-        const inputValue = e.target.value;
-        setData(name, inputValue);
-        clearTimeout(debounceTimeout); // Limpia cualquier timeout anterior
 
-         debounceTimeout = setTimeout(() => {
-            console.log("LocationInputField: handleInputChange: Ejecutando búsqueda después del debounce");
-            fetchSuggestions(inputValue);
+    const handleInputChange = (e) => {
+        const newInputValue = e.target.value;
+        setInputValue(newInputValue);
+
+        if (!allowMultipleCities) {
+            setData(name, newInputValue);
+        }
+
+        const searchQuery = getSearchQuery(newInputValue);
+
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+            console.log("LocationInputField: handleInputChange: Ejecutando busqueda despues del debounce");
+            fetchSuggestions(searchQuery);
         }, DEBOUNCE_DELAY);
     };
+
+
+    const getSelectedCitiesArray = (currentInputValue) => {
+        return currentInputValue.split(',').map(city => city.trim()).filter(city => city !== '');
+    };
+
+    const getSearchQuery = (currentInputValue) => {
+        if (!allowMultipleCities) return currentInputValue;
+        const citiesArray = currentInputValue.split(',').map(city => city.trim());
+        const lastPart = citiesArray.pop() || '';
+        return lastPart.trim();
+    };
+
 
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (suggestionsRef.current && !suggestionsRef.current.contains(event.target) && inputRef.current && !inputRef.current.contains(event.target)) {
                 setShowSuggestions(false);
-                console.log("LocationInputField: handleClickOutside: Ocultando sugerencias (clic fuera)");
+                console.log("LocationInputField: handleClickOutside: Ocultando sugerencias (click fuera)");
             }
         };
 
@@ -83,25 +143,27 @@ function LocationInputField({ data, setData, name, label, placeholder, isLocatio
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
-             clearTimeout(debounceTimeout); // Importante limpiar el timeout al desmontar
+            clearTimeout(debounceTimeout);
         };
     }, [suggestionsRef, inputRef]);
+
 
     return (
         <div>
             <InputField
                 ref={inputRef}
-                data={data}
-                setData={setData}
-                name={name}
+                data={allowMultipleCities ? { [name]: inputValue } : data}
+                setData={allowMultipleCities ? setInputValue : setData}
+                name={allowMultipleCities ? 'tempInput' : name}
                 label={label}
                 placeholder={placeholder}
                 onChange={handleInputChange}
+                value={inputValue}
                 {...props}
             />
             {isLocationSpecific && (
                 <div className="relative" ref={suggestionsRef}>
-                    {loading && <div>Loading...</div>}
+                    {loading && <div>Cargando...</div>}
                     {showSuggestions && suggestions.length > 0 && (
                         <ul className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
                             {suggestions.map((suggestion, index) => (

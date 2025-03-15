@@ -16,7 +16,9 @@
 [x] Que el buscador funciones
 [x] Filtros 
 [x] Poder enviar mensajes a los roomates
-[ ] Poder elegir ciudades en el perfil
+[x] Poder elegir ciudades en el perfil
+[x] Poder eliminar rooms
+[ ] Poder editar rooms
 
 # Bug
 [ ] El estado de las ciudades no se mantiene

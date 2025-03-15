@@ -2,16 +2,6 @@
 import React from 'react';
 import { useForm, Head, usePage } from '@inertiajs/react'; // Importa usePage
 import { Button } from "@/Components/ui/button";
-
-/* 
-no se que hice mal aqui
-muestra 
-The address field is required.
-The city field is required.
-
-a pesar de que lleno todo
-
-*/
 import InputField from '@/Components/InputField';
 import CheckboxField from '@/Components/CheckboxField';
 import MainLayout from '@/Layouts/MainLayout';
