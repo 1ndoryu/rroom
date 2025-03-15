@@ -1,8 +1,8 @@
 // resources/js/Pages/Content/components/SearchWithCustomFilter.jsx
+// (No changes needed here - all changes are in CityFilterInput)
 import React, { useState, useRef, useEffect } from 'react';
 import { router, usePage } from '@inertiajs/react';
 import './SearchWithCustomFilter.css';
-// import IconArrow from '@svgs/IconArrow';  // Not used, consider removing or using -  REMOVED, as you stated.
 import { Modal, Button } from 'react-bootstrap';
 import CityFilterInput from '@/Components/CityFilterInput';
 
@@ -22,7 +22,7 @@ const DROPDOWN_CATEGORIES = [
 
 const MARGIN_BELOW_BUTTON = 8;
 
-function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory: initialFilterCategory, filterGender: initialFilterGender, filterCities: initialFilterCities, filterMinPrice: initialFilterMinPrice, filterMaxPrice: initialFilterMaxPrice}) { // Receive initial values for cities and price
+function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory: initialFilterCategory, filterGender: initialFilterGender, filterCities: initialFilterCities, filterMinPrice: initialFilterMinPrice, filterMaxPrice: initialFilterMaxPrice }) {
     const [activeCategory, setActiveCategory] = useState(initialFilterCategory || 'All Listing');
     const [searchTerm, setSearchTerm] = useState(initialSearchTerm || '');
     const { props } = usePage();
@@ -34,39 +34,58 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
     const maxInputRef = useRef(null);
 
     const [selectedGender, setSelectedGender] = useState(initialFilterGender || 'All');
-    const [selectedCities, setSelectedCities] = useState(initialFilterCities || []);  // Initialize with props
-    const [priceRange, setPriceRange] = useState({ min: initialFilterMinPrice || 0, max: initialFilterMaxPrice || 0 }); // Initialize with props
+    const [selectedCities, setSelectedCities] = useState(initialFilterCities || []);
+    const [priceRange, setPriceRange] = useState({ min: initialFilterMinPrice || 0, max: initialFilterMaxPrice || 0 });
 
-    // Modal State
     const [showModal, setShowModal] = useState(false);
-    const handleShowModal = () => setShowModal(true);
-    const handleCloseModal = () => setShowModal(false);
+
+    const [tempSelectedCities, setTempSelectedCities] = useState(initialFilterCities || []);
+    const [tempPriceRange, setTempPriceRange] = useState({ min: initialFilterMinPrice || 0, max: initialFilterMaxPrice || 0 });
+    const [tempSelectedGender, setTempSelectedGender] = useState(initialFilterGender || 'All');
+    const [tempActiveCategory, setTempActiveCategory] = useState(initialFilterCategory || 'All Listing');
 
 
-    // USE handleFilterChange, this function is in charge to send parameters to the controller, when the user clicks apply filters button, this function will be executed
+    const handleShowModal = () => {
+        setTempSelectedCities(selectedCities);
+        setTempPriceRange(priceRange);
+        setTempSelectedGender(selectedGender);
+        setTempActiveCategory(activeCategory);
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+      setShowModal(false);
+    };
+
     const handleFilterChange = (category, gender, cities, priceRange) => {
         const params = {
-            search: searchTerm, // Consider removing if not used - YES, Remove it, because it isn't used
             filterCategory: category,
             filterGender: gender,
-            cities: cities.map(city => city.value), // Ensure correct format for Inertia
+            cities: cities.map(city => city.value),
             minPrice: priceRange.min,
             maxPrice: priceRange.max,
         };
-        // console.log("Sending parameters:", params);  // Kept for debugging, remove in production - REMOVED
 
         router.get(route('content.index'), params, {
-            preserveState: true, // Changed to true
+            preserveState: true,
             preserveScroll: true,
+            onSuccess: () => {
+              handleCloseModal();
+            }
         });
     };
 
-    // Combined effect for setting initial states
      useEffect(() => {
         setActiveCategory(initialFilterCategory || 'All Listing');
         setSelectedGender(initialFilterGender || 'All');
         setSelectedCities(initialFilterCities || []);
         setPriceRange({ min: initialFilterMinPrice || 0, max: initialFilterMaxPrice || 0 });
+
+        setTempSelectedCities(initialFilterCities || []);
+        setTempPriceRange({ min: initialFilterMinPrice || 0, max: initialFilterMaxPrice || 0 });
+        setTempSelectedGender(initialFilterGender || 'All');
+        setTempActiveCategory(initialFilterCategory || 'All Listing');
+
 
     }, [initialFilterCategory, initialFilterGender, initialFilterCities, initialFilterMinPrice, initialFilterMaxPrice, props]);
 
@@ -89,7 +108,6 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
 
             left = triggerRect.left + (triggerRect.width / 2) - (dropdownRect.width / 2);
 
-             // Ensure dropdown stays within viewport
             left = Math.max(10, Math.min(left, window.innerWidth - dropdownRect.width - 20));
             setDropdownPosition({ top, left, position });
         }
@@ -117,20 +135,21 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
     }, [isOpen]);
 
     const handleOptionClick = (value) => {
-        setSelectedGender(value);
-        // handleFilterChange(activeCategory, value, selectedCities, priceRange); // NO! Don't call here
+        setTempSelectedGender(value);
         setIsOpen(false);
     };
 
     const handleCityChange = (selectedOptions) => {
-        setSelectedCities(selectedOptions);
-        // Don't call handleFilterChange here - CORRECT
+        setTempSelectedCities(selectedOptions);
     };
 
     const handlePriceChange = (newPriceRange) => {
-        setPriceRange(newPriceRange);
-        // Don't call handleFilterChange here - CORRECT
+        setTempPriceRange(newPriceRange);
     };
+    const handleCategoryClick = (categoryName) => {
+        setTempActiveCategory(categoryName);
+    };
+
 
     const calculateInputWidth = (inputElement, value) => {
         if (!inputElement) return;
@@ -147,21 +166,33 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
         tempSpan.textContent = `${value}₹`;
         document.body.appendChild(tempSpan);
         const textWidth = tempSpan.offsetWidth;
-        inputElement.style.width = `${textWidth + 20}px`; // Adjusted margin
+        inputElement.style.width = `${textWidth + 20}px`;
         document.body.removeChild(tempSpan);
     };
 
     useEffect(() => {
         if (showModal) {
-            calculateInputWidth(minInputRef.current, priceRange.min);
-            calculateInputWidth(maxInputRef.current, priceRange.max);
+            calculateInputWidth(minInputRef.current, tempPriceRange.min);
+            calculateInputWidth(maxInputRef.current, tempPriceRange.max);
         }
-    }, [priceRange.min, priceRange.max, showModal]);
+    }, [tempPriceRange.min, tempPriceRange.max, showModal]);
 
-    const handleModalApply = () => {
-        handleFilterChange(activeCategory, selectedGender, selectedCities, priceRange);  // Call handleFilterChange here, when Apply button is pressed
-        handleCloseModal();
+
+     const handleModalApply = () => {
+        setSelectedCities(tempSelectedCities);
+        setPriceRange(tempPriceRange);
+        setSelectedGender(tempSelectedGender);
+        setActiveCategory(tempActiveCategory);
+        handleFilterChange(tempActiveCategory, tempSelectedGender, tempSelectedCities, tempPriceRange);
     };
+
+    const handleModalCancel = () => {
+        setTempSelectedCities(selectedCities);
+        setTempPriceRange(priceRange);
+        setTempSelectedGender(selectedGender);
+        setTempActiveCategory(activeCategory);
+        handleCloseModal();
+    }
 
     return (
         <div className="search-custom-filter">
@@ -171,8 +202,7 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
                         key={category.id}
                         className={`filter-category-item ${activeCategory === category.name ? 'filter-active' : ''}`}
                         onClick={() => {
-                            setActiveCategory(category.name);
-                            // handleFilterChange(category.name, selectedGender, selectedCities, priceRange); // NO!  Only change the active category.  Filters are applied on "Apply".
+                          handleCategoryClick(category.name);
                         }}
                     >
                         <i className={`filter-icon fa-regular ${category.icon}`}></i>
@@ -226,7 +256,7 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
                     <div className="filter-modal-section">
                         <label>Select Cities:</label>
                         <CityFilterInput
-                            value={selectedCities}
+                            value={tempSelectedCities}
                             onChange={handleCityChange}
                             placeholder="Select Cities"
                         />
@@ -242,8 +272,8 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
                                     type="number"
                                     id="minPrice"
                                     className="filter-price-input"
-                                    value={priceRange.min}
-                                    onChange={(e) => handlePriceChange({ ...priceRange, min: parseInt(e.target.value) || 0 })}
+                                    value={tempPriceRange.min}
+                                    onChange={(e) => handlePriceChange({ ...tempPriceRange, min: parseInt(e.target.value) || 0 })}
                                     aria-label="Minimum price in Indian Rupees"
                                     ref={minInputRef}
                                 />
@@ -255,8 +285,8 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
                                     type="number"
                                     id="maxPrice"
                                     className="filter-price-input"
-                                    value={priceRange.max}
-                                    onChange={(e) => handlePriceChange({ ...priceRange, max: parseInt(e.target.value) || 0 })}
+                                    value={tempPriceRange.max}
+                                    onChange={(e) => handlePriceChange({ ...tempPriceRange, max: parseInt(e.target.value) || 0 })}
                                     aria-label="Maximum price in Indian Rupees"
                                     ref={maxInputRef}
                                 />
@@ -265,8 +295,8 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>
-                        Close
+                    <Button variant="secondary" onClick={handleModalCancel}>
+                        Cancel
                     </Button>
                     <Button variant="primary" onClick={handleModalApply}>
                         Apply Filters

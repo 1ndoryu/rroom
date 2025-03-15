@@ -19,7 +19,6 @@ Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
 Route::get('/content', [ContentController::class, 'index'])->name('content.index');
 Route::get('/content/{type}/{id}', [ContentController::class, 'show'])->name('content.show');
 
-// Rutas del dashboard y perfil (se mantienen igual)
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -41,6 +40,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/myrooms', [MyRoomsController::class, 'index'])->name('myrooms.index');
     Route::delete('/rooms/{room}', [RoomController::class, 'destroy'])->name('rooms.destroy');
+
+    Route::get('/rooms/{room}/edit', [RoomController::class, 'edit'])->name('rooms.edit');
+    Route::put('/rooms/{room}', [RoomController::class, 'update'])->name('rooms.update'); 
     // routes/web.php
 
 

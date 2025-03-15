@@ -42,7 +42,8 @@ class Room extends Model
         'roomies',
         'minimum_stay',
         'maximum_stay',
-        'user_id', // Asegúrate de incluir user_id aquí
+        'user_id', 
+        'city',
     ];
 
     public function user(): BelongsTo

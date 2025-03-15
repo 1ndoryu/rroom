@@ -7,7 +7,6 @@
 [x] Pedir nombre
 [x] El usuario tiene que poder publicarse.
 [x] Los usuarios que buscan, tiene que visualizar los roomate publicados.
-
 [x] Single Post de room
 [x] Single post de roommate
 
@@ -18,11 +17,10 @@
 [x] Poder enviar mensajes a los roomates
 [x] Poder elegir ciudades en el perfil
 [x] Poder eliminar rooms
-[ ] Poder editar rooms
+[x] Poder editar rooms
 
 # Bug
-[ ] El estado de las ciudades no se mantiene
-[ ] El submenu y el modal deberían cerrarse al dar click afuera (content)
+[x] El estado de las ciudades no se mantiene en el modal
 
 # Front
 [ ] Arreglar imagen de perfil en el formulario de creacion

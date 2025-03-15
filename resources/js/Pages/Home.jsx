@@ -1,6 +1,6 @@
 // resources/js/Pages/Home.jsx
 import React from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { Button } from '@/Components/ui/button';
 import MainLayout from '@/Layouts/MainLayout';
 import { usePage } from '@inertiajs/react';
@@ -46,7 +46,7 @@ function Home({ rooms }) {
             {/* Sección para usuarios autenticados */}
             {auth.user && (
                 <div className="flex flex-col items-center justify-center min-h-[60vh]">
-                    <div className="text-center relative">
+                    <div className="relative text-center">
                         <h1 className="text-6xl font-bold leading-tight text-[--black]">
                             Welcome Back!
                         </h1>
@@ -54,7 +54,7 @@ function Home({ rooms }) {
                             Find your perfect roommate or list your room.
                         </p>
                     </div>
-                    
+
                     <div className="w-full max-w-md mt-8">
                         <div className="flex justify-center space-x-4">
                             <Button asChild variant="secondary" size="lg">
@@ -70,7 +70,9 @@ function Home({ rooms }) {
 
             {/* Sección de habitaciones (pública) */}
             <div className="mt-10">
-                <h2 className="mb-5 text-2xl font-semibold text-center text-[--black]">Discover Rooms</h2>
+                <h2 className="mb-5 text-2xl font-semibold text-center text-[--black]">
+                  <Link href="/content">Discover Rooms</Link>
+                </h2>
                 <div className="grid grid-cols-1 card-wrapper gap-7 my-7 md:grid-cols-2 lg:gap-10 lg:my-10">
                     {/*  Asegúrate de que rooms sea un array antes de usar map */}
                     {Array.isArray(rooms) && rooms.map(room => (

@@ -10,7 +10,7 @@ function ImageUpload({
     data,
     setData,
     name,
-    initialImage,
+    initialImage  = null,
     maxImages = 1,
     maxFileSizeMB = 3,
 }) {
@@ -81,7 +81,7 @@ function ImageUpload({
         <div>
             <Label>Image</Label>
             <div
-                className="cursor-pointer border-2 border-dashed border-gray-300 p-4 text-center"
+                className="p-4 text-center border-2 border-gray-300 border-dashed cursor-pointer"
                 onClick={() => fileInputRef.current?.click()} // Usa la referencia
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDrop}
@@ -91,7 +91,7 @@ function ImageUpload({
                         <img
                             src={preview}
                             alt="Preview"
-                            className="h-60 w-60 rounded object-cover"
+                            className="object-cover rounded h-60 w-60"
                         />
                         <button
                             type="button"

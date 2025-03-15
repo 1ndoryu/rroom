@@ -7,15 +7,15 @@ import { Button } from '@/Components/ui/button';
 import { Head } from '@inertiajs/react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/Components/ui/avatar';
 import MessageListModal from '@/Components/MessageListModal';
-import MessageModal from '@/Components/MessageModal'; // Asegúrate de tener importado MessageModal
+import MessageModal from '@/Components/MessageModal';
 
 function AuthNavbar({ user }) {
     const userName = user?.name || '';
     const initials = userName.substring(0, 2).toUpperCase();
     const [searchTerm, setSearchTerm] = useState('');
     const [isSearchOpen, setSearchOpen] = useState(false);
-    const [isMessagesOpen, setMessagesOpen] = useState(false); // Controla el modal de la lista de conversaciones
-    const [selectedUser, setSelectedUser] = useState(null); // Usuario seleccionado para la conversación
+    const [isMessagesOpen, setMessagesOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
 
     const handleSearch = (event) => {
         event.preventDefault();
@@ -33,18 +33,21 @@ function AuthNavbar({ user }) {
         setMessagesOpen(!isMessagesOpen);
     };
 
-    // Función callback para cuando se selecciona un usuario en la lista de conversaciones
+
     const handleSelectUser = (user) => {
         console.log(`AuthNavbar: handleSelectUser: Usuario seleccionado ${user.name}`);
         setSelectedUser(user);
-        setMessagesOpen(false); // Cierra el modal de lista de conversaciones
+        setMessagesOpen(false);
     };
 
     return (
         <div className="flex items-stretch justify-between w-full">
-            <div className="flex items-center ml-auto mb-[-4px] p-1">
-                <Button className="border-none hover:bg-transparent" variant="outline" onClick={() => router.visit('/rooms')}>
+            <div className="flex items-center ml-auto mb-[-4px] p-1 space-x-0">
+                <Button className="border-none hover:bg-transparent" variant="outline" onClick={() => router.visit('/myrooms')}>
                     My rooms
+                </Button>
+                <Button className="border-none hover:bg-transparent" variant="outline" onClick={() => router.visit('/content')}>
+                    Explorer
                 </Button>
             </div>
             <div id="sr" className="absolute z-50 w-full max-w-md -translate-x-1/2 top-3 left-1/2">

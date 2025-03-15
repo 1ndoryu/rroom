@@ -15,65 +15,8 @@ use Illuminate\Validation\Rule;
 
 class RoomController extends Controller
 {
-    public function index()
-    {
-        Log::info('RoomController:index - Iniciando la función index.');
 
-        $rooms = Room::with(['user', 'images'])->latest()->get();
-
-        $roomsData = $rooms->map(function ($room) {
-            return [
-                'id' => $room->id,
-                'city' => $room->city,
-                'address' => $room->address,
-                'hide_address' => $room->hide_address,
-                'property_type' => $room->property_type,
-                'rent' => $room->rent,
-                'bills_included' => $room->bills_included,
-                'security_deposit' => $room->security_deposit,
-                'available_on' => $room->available_on,
-                'preferred_gender' => $room->preferred_gender,
-                'bathroom_type' => $room->bathroom_type,
-                'parking' => $room->parking,
-                'internet_access' => $room->internet_access,
-                'private_room' => $room->private_room,
-                'furnished' => $room->furnished,
-                'accessible' => $room->accessible,
-                'lgbt_friendly' => $room->lgbt_friendly,
-                'cannabis_friendly' => $room->cannabis_friendly,
-                'cat_friendly' => $room->cat_friendly,
-                'dog_friendly' => $room->dog_friendly,
-                'children_friendly' => $room->children_friendly,
-                'student_friendly' => $room->student_friendly,
-                'senior_friendly' => $room->senior_friendly,
-                'requires_background_check' => $room->requires_background_check,
-                'description' => $room->description,
-                'roomies_description' => $room->roomies_description,
-                'bedrooms' => $room->bedrooms,
-                'bathrooms' => $room->bathrooms,
-                'roomies' => $room->roomies,
-                'minimum_stay' => $room->minimum_stay,
-                'maximum_stay' => $room->maximum_stay,
-                'user' => [
-                    'id' => $room->user->id,
-                    'name' => $room->user->name,
-                ],
-                // Usa asset() para generar URLs absolutas para las imágenes, o solo url
-                'imageUrls' => $room->images->map(fn($image) => $image->url)->toArray(),
-                'created_at' => $room->created_at,
-                'updated_at' => $room->updated_at,
-            ];
-        });
-
-        Log::info('RoomController:index - Habitaciones obtenidas de la base de datos.', ['rooms' => $roomsData]);
-
-
-        return Inertia::render('Rooms/Index', [
-            'rooms' => $roomsData,
-        ]);
-    }
-
-    public function update(Request $request, Room $room) // Route Model Binding
+    public function update(Request $request, Room $room) 
     {
         Log::info("RoomController:update - START - Updating room with ID: {$room->id}");
 
@@ -188,7 +131,7 @@ class RoomController extends Controller
         return Inertia::render('Rooms/Create');
     }
 
-    public function edit(Room $room) // Route Model Binding
+    public function edit(Room $room) 
     {
         Log::info("RoomController:edit - START - Editing room with ID: {$room->id}");
 
@@ -244,7 +187,6 @@ class RoomController extends Controller
             'room' => $roomData,        // Pasa los datos *preparados*.
         ]);
     }
-
 
     public function store(Request $request)
     {
@@ -323,10 +265,10 @@ class RoomController extends Controller
 
 
         Log::info('RoomController:store - Redirigiendo a rooms.index.');
-        return redirect()->route('rooms.index')->with('success', 'Habitación creada: La habitación ha sido creada con éxito.'); //Se redirige a rooms.index
+        return redirect()->route('content.index')->with('success', 'Habitación creada: La habitación ha sido creada con éxito.'); //Se redirige a rooms.index
     }
 
-    public function destroy(Room $room) //Usa Route Model Binding
+    public function destroy(Room $room) 
     {
         Log::info("RoomController:destroy - START - Deleting room with ID: {$room->id}");
 
