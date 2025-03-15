@@ -4,6 +4,7 @@ import { Label } from "@/Components/ui/label";
 import { cn } from "@/lib/utils"; // Import the cn function
 
 
+// /Components/InputField.jsx
 function InputField({ data, setData, name, label, type = "text", placeholder, InputProps, ...props }) {
     const handleChange = (e) => {
         setData(name, e.target.value);

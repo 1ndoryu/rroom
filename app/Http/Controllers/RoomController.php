@@ -22,6 +22,7 @@ class RoomController extends Controller
         $roomsData = $rooms->map(function ($room) {
             return [
                 'id' => $room->id,
+                'city' => $room->city,
                 'address' => $room->address,
                 'hide_address' => $room->hide_address,
                 'property_type' => $room->property_type,
@@ -81,6 +82,7 @@ class RoomController extends Controller
 
         $validatedData = $request->validate([
             'address' => 'required|string',
+            'city' => 'required|string',
             'hide_address' => 'required|boolean',
             'property_type' => 'required|string',
             'rent' => 'required|integer',

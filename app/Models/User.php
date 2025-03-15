@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany; // Importante!
 
 class User extends Authenticatable
 {
@@ -27,6 +28,17 @@ class User extends Authenticatable
     public function profile(): HasOne  //  relación uno a uno
     {
         return $this->hasOne(UserProfile::class);
+    }
+
+    // Añade estas relaciones:
+    public function sentMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
     }
 
     /**

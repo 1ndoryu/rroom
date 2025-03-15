@@ -2,6 +2,16 @@
 import React from 'react';
 import { useForm, Head, usePage } from '@inertiajs/react'; // Importa usePage
 import { Button } from "@/Components/ui/button";
+
+/* 
+no se que hice mal aqui
+muestra 
+The address field is required.
+The city field is required.
+
+a pesar de que lleno todo
+
+*/
 import InputField from '@/Components/InputField';
 import CheckboxField from '@/Components/CheckboxField';
 import MainLayout from '@/Layouts/MainLayout';
@@ -9,12 +19,14 @@ import SelectField from '@/Components/SelectField';
 import TextareaField from '@/Components/TextareaField';
 import ImageUpload from '@/Components/ImageUpload';
 import PropertyTypeSelector from '@/Components/PropertyTypeSelector';
+import LocationInputField from '@/Components/LocationInputField';
 
 function CreateRoom() {
     const { errors, auth } = usePage().props;
 
     const { data, setData, post, processing, reset } = useForm({
         address: '',
+        city: '',
         hide_address: false,
         property_type: 'apartment',
         rent: '', // Inicializa como string vacío
@@ -98,7 +110,15 @@ function CreateRoom() {
                             setData={setData}
                             name="address"
                             label="Address"
-                            placeholder="Enter the address"
+                            placeholder="Enter the Address"
+                        />
+                        <LocationInputField
+                            data={data}
+                            setData={setData}
+                            name="city"
+                            label="City"
+                            placeholder="Enter the City"
+                            isLocationSpecific={true}
                         />
                         <CheckboxField
                             data={data}

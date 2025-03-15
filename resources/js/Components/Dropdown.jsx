@@ -1,3 +1,5 @@
+// resources/js/Components/Dropdown.jsx
+
 import { Transition } from '@headlessui/react';
 import { Link } from '@inertiajs/react';
 import { createContext, useContext, useState } from 'react';

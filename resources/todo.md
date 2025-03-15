@@ -7,11 +7,20 @@
 [x] Pedir nombre
 [x] El usuario tiene que poder publicarse.
 [x] Los usuarios que buscan, tiene que visualizar los roomate publicados.
-[x] Que el buscador funciones
 
-[ ] Single Post de room
-[ ] Single post de roommate
-[ ] Poder enviar mensajes a los roomates
+[x] Single Post de room
+[x] Single post de roommate
+
+# Pasos finales
+[x] En el formulario de subida poner las ciudad por defecto de nepal y india
+[x] Que el buscador funciones
+[x] Filtros 
+[x] Poder enviar mensajes a los roomates
+[ ] Poder elegir ciudades en el perfil
+
+# Bug
+[ ] El estado de las ciudades no se mantiene
+[ ] El submenu y el modal deberían cerrarse al dar click afuera (content)
 
 # Front
 [ ] Arreglar imagen de perfil en el formulario de creacion
