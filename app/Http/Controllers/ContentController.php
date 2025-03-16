@@ -1,4 +1,5 @@
 <?php
+// app/Http/Controllers/ContentController.php
 
 namespace App\Http\Controllers;
 
@@ -21,12 +22,15 @@ class ContentController extends Controller
         $filterMinPrice = $request->input('minPrice', 0);
         $filterMaxPrice = $request->input('maxPrice', 0);
 
+
         $roomsData = collect();
         $profilesData = collect();
 
+        // Rooms filtering
         if (in_array($filterCategory, ['All Listing', 'Rooms', 'PG'])) {
             $roomsQuery = Room::with(['user', 'images']);
 
+            // Search term
             if ($searchTerm) {
                 $roomsQuery->where(function ($query) use ($searchTerm) {
                     $query->where('address', 'ILIKE', '%' . $searchTerm . '%')
@@ -38,20 +42,13 @@ class ContentController extends Controller
                 });
             }
 
+            // Gender filter for rooms
             if ($filterGender !== 'All') {
-                $roomGenderValues = [];
-                if ($filterGender === 'male') {
-                    $roomGenderValues = ['males', 'male'];
-                } elseif ($filterGender === 'female') {
-                    $roomGenderValues = ['females', 'female'];
-                } else {
-                    $roomGenderValues = [$filterGender];
-                }
-                $roomsQuery->whereIn('preferred_gender', $roomGenderValues);
+                $roomsQuery->where('preferred_gender', $filterGender);
             }
 
-            if (!empty($filterCities)) {
-                // Change here: Use whereIn for single city, and a loop for multiple
+            // City filter for rooms
+             if (!empty($filterCities)) {
                 $roomsQuery->where(function ($query) use ($filterCities) {
                     foreach ($filterCities as $city) {
                         $query->orWhere('city', 'ILIKE', '%' . $city . '%');
@@ -59,17 +56,15 @@ class ContentController extends Controller
                 });
             }
 
-            if ($filterMinPrice > 0 || $filterMaxPrice > 0) {
-                if ($filterMinPrice > 0) {
-                    $roomsQuery->where('rent', '>=', $filterMinPrice);
-                }
-                if ($filterMaxPrice > 0) {
-                    $roomsQuery->where('rent', '<=', $filterMaxPrice);
-                }
+            // Price filter for rooms
+            if ($filterMinPrice > 0) {
+                $roomsQuery->where('rent', '>=', $filterMinPrice);
+            }
+            if ($filterMaxPrice > 0) {
+                $roomsQuery->where('rent', '<=', $filterMaxPrice);
             }
 
             $rooms = $roomsQuery->latest()->get();
-
             $roomsData = $rooms->map(function ($room) {
                 Log::info("ContentController:index: City of Room: " . $room->city);
                 return [
@@ -90,9 +85,11 @@ class ContentController extends Controller
             });
         }
 
+        // Roommates (UserProfiles) filtering
         if (in_array($filterCategory, ['All Listing', 'Roommates'])) {
             $profilesQuery = UserProfile::with('user')->whereHas('user');
 
+            // Search term
             if ($searchTerm) {
                 $profilesQuery->where(function ($query) use ($searchTerm) {
                     $query->where('name', 'ILIKE', '%' . $searchTerm . '%')
@@ -104,40 +101,28 @@ class ContentController extends Controller
                 });
             }
 
+            // Gender filter for profiles
             if ($filterGender !== 'All') {
-                $profileGenderValues = [];
-                if ($filterGender === 'male') {
-                    $profileGenderValues = ['male', 'males'];
-                } elseif ($filterGender === 'female') {
-                    $profileGenderValues = ['female', 'females'];
-                } else {
-                    $profileGenderValues = [$filterGender];
-                }
-
-                $profilesQuery->whereIn('gender', $profileGenderValues);
+               $profilesQuery->where('gender', $filterGender);
             }
 
-            if (!empty($filterCities)) {
-            //Crucial change here:  Iterate and use orWhere for *each* city
+            // City filter for profiles
+             if (!empty($filterCities)) {
                 $profilesQuery->where(function ($query) use ($filterCities) {
                     foreach ($filterCities as $city) {
                         $query->orWhere('looking_in', 'ILIKE', '%' . $city . '%');
                     }
                 });
             }
-
-            if ($filterMinPrice > 0 || $filterMaxPrice > 0) {
-                if ($filterMinPrice > 0) {
-                    $profilesQuery->where('budget', '>=', $filterMinPrice);
-                }
-                if ($filterMaxPrice > 0) {
-                    $profilesQuery->where('budget', '<=', $filterMaxPrice);
-                }
+            // Price filter (budget) for profiles
+            if ($filterMinPrice > 0) {
+                $profilesQuery->where('budget', '>=', $filterMinPrice);
+            }
+            if ($filterMaxPrice > 0) {
+                $profilesQuery->where('budget', '<=', $filterMaxPrice);
             }
 
             $profiles = $profilesQuery->latest()->get();
-
-
             $profilesData = $profiles->map(function ($profile) {
                 Log::info("ContentController:index: City of Profile: " . $profile->looking_in);
                 return [
@@ -158,6 +143,8 @@ class ContentController extends Controller
                 ];
             });
         }
+
+        // Combine and return results
         Log::info("ContentController:index: Filter Behavior - Category: $filterCategory, Gender: $filterGender, Cities: " . json_encode($filterCities) . ", MinPrice: $filterMinPrice, MaxPrice: $filterMaxPrice");
         $combinedData = $roomsData->concat($profilesData)->sortByDesc('created_at')->values()->all();
 
@@ -172,8 +159,7 @@ class ContentController extends Controller
         ]);
     }
 
-
-    public function show($type, $id)
+     public function show($type, $id)
     {
         if ($type !== 'room' && $type !== 'profile') {
             abort(404);

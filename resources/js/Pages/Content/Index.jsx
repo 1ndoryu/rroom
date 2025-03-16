@@ -1,4 +1,3 @@
-// resources/js/Pages/Content/index.jsx
 import { Head, usePage } from '@inertiajs/react';
 import MainLayout from '@/Layouts/MainLayout';
 import ContentCard from '@/Components/ContentCard';

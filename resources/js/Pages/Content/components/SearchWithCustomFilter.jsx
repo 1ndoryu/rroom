@@ -1,11 +1,8 @@
-// resources/js/Pages/Content/components/SearchWithCustomFilter.jsx
-// (No changes needed here - all changes are in CityFilterInput)
 import React, { useState, useRef, useEffect } from 'react';
 import { router, usePage } from '@inertiajs/react';
 import './SearchWithCustomFilter.css';
 import { Modal, Button } from 'react-bootstrap';
 import CityFilterInput from '@/Components/CityFilterInput';
-
 
 const CATEGORIES = [
     { id: 1, name: 'All Listing', icon: 'fa-border-all' },
@@ -44,7 +41,6 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
     const [tempSelectedGender, setTempSelectedGender] = useState(initialFilterGender || 'All');
     const [tempActiveCategory, setTempActiveCategory] = useState(initialFilterCategory || 'All Listing');
 
-
     const handleShowModal = () => {
         setTempSelectedCities(selectedCities);
         setTempPriceRange(priceRange);
@@ -54,7 +50,7 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
     };
 
     const handleCloseModal = () => {
-      setShowModal(false);
+        setShowModal(false);
     };
 
     const handleFilterChange = (category, gender, cities, priceRange) => {
@@ -70,12 +66,12 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
             preserveState: true,
             preserveScroll: true,
             onSuccess: () => {
-              handleCloseModal();
+                handleCloseModal();
             }
         });
     };
 
-     useEffect(() => {
+    useEffect(() => {
         setActiveCategory(initialFilterCategory || 'All Listing');
         setSelectedGender(initialFilterGender || 'All');
         setSelectedCities(initialFilterCities || []);
@@ -85,10 +81,7 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
         setTempPriceRange({ min: initialFilterMinPrice || 0, max: initialFilterMaxPrice || 0 });
         setTempSelectedGender(initialFilterGender || 'All');
         setTempActiveCategory(initialFilterCategory || 'All Listing');
-
-
     }, [initialFilterCategory, initialFilterGender, initialFilterCities, initialFilterMinPrice, initialFilterMaxPrice, props]);
-
 
     const calculateDropdownPosition = () => {
         if (triggerRef.current && dropdownRef.current) {
@@ -107,7 +100,6 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
             }
 
             left = triggerRect.left + (triggerRect.width / 2) - (dropdownRect.width / 2);
-
             left = Math.max(10, Math.min(left, window.innerWidth - dropdownRect.width - 20));
             setDropdownPosition({ top, left, position });
         }
@@ -134,9 +126,18 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
         };
     }, [isOpen]);
 
+    // Al seleccionar una opción de género se actualiza inmediatamente
     const handleOptionClick = (value) => {
+        setSelectedGender(value);
         setTempSelectedGender(value);
         setIsOpen(false);
+        router.get(route('content.index'), {
+            filterCategory: activeCategory,
+            filterGender: value,
+            cities: selectedCities.map(city => city.value),
+            minPrice: priceRange.min,
+            maxPrice: priceRange.max,
+        }, { preserveState: true, preserveScroll: true });
     };
 
     const handleCityChange = (selectedOptions) => {
@@ -146,10 +147,19 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
     const handlePriceChange = (newPriceRange) => {
         setTempPriceRange(newPriceRange);
     };
-    const handleCategoryClick = (categoryName) => {
-        setTempActiveCategory(categoryName);
-    };
 
+    // Al hacer click en una categoría (por ejemplo: Rooms, Roommates) se dispara la consulta
+    const handleCategoryClick = (categoryName) => {
+        setActiveCategory(categoryName);
+        setTempActiveCategory(categoryName);
+        router.get(route('content.index'), {
+            filterCategory: categoryName,
+            filterGender: selectedGender,
+            cities: selectedCities.map(city => city.value),
+            minPrice: priceRange.min,
+            maxPrice: priceRange.max,
+        }, { preserveState: true, preserveScroll: true });
+    };
 
     const calculateInputWidth = (inputElement, value) => {
         if (!inputElement) return;
@@ -177,8 +187,7 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
         }
     }, [tempPriceRange.min, tempPriceRange.max, showModal]);
 
-
-     const handleModalApply = () => {
+    const handleModalApply = () => {
         setSelectedCities(tempSelectedCities);
         setPriceRange(tempPriceRange);
         setSelectedGender(tempSelectedGender);
@@ -192,7 +201,7 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
         setTempSelectedGender(selectedGender);
         setTempActiveCategory(activeCategory);
         handleCloseModal();
-    }
+    };
 
     return (
         <div className="search-custom-filter">
@@ -201,9 +210,7 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
                     <div
                         key={category.id}
                         className={`filter-category-item ${activeCategory === category.name ? 'filter-active' : ''}`}
-                        onClick={() => {
-                          handleCategoryClick(category.name);
-                        }}
+                        onClick={() => handleCategoryClick(category.name)}
                     >
                         <i className={`filter-icon fa-regular ${category.icon}`}></i>
                         <p className="filter-category-name">{category.name}</p>
