@@ -1,6 +1,6 @@
 // resources/js/Pages/Home.jsx
-import React from 'react';
-import { Head, Link } from '@inertiajs/react';
+import React, { useState } from 'react'; // Importa useState
+import { Head, Link, router } from '@inertiajs/react'; // Importa router
 import { Button } from '@/Components/ui/button';
 import MainLayout from '@/Layouts/MainLayout';
 import { usePage } from '@inertiajs/react';
@@ -8,6 +8,13 @@ import ContentCard from '@/Components/ContentCard';
 
 function Home({ rooms }) {
     const { auth } = usePage().props;
+    const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
+
+    const handleSearch = (event) => {
+        event.preventDefault();
+        console.log('Home:handleSearch - Término:', searchTerm);
+        router.visit(`/content?search=${searchTerm}`); // Redirige a /content con el parámetro de búsqueda
+    };
 
     return (
         <MainLayout auth={auth}>
@@ -32,18 +39,21 @@ function Home({ rooms }) {
                         </p>
                     </div>
                     <div className="w-full max-w-md mt-8">
-                        <form className="flex items-center">
+                        {/* Formulario de búsqueda */}
+                        <form className="flex items-center" onSubmit={handleSearch}>
                             <input
                                 type="text"
                                 placeholder="Search for places..."
                                 className="w-full px-4 py-3 bg-white rounded-[200px] focus:outline-none focus:ring-2 focus:ring-gray-600"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </form>
                     </div>
                 </div>
             )}
 
-            {/* Sección para usuarios autenticados */}
+          {/* Sección para usuarios autenticados */}
             {auth.user && (
                 <div className="flex flex-col items-center justify-center min-h-[60vh]">
                     <div className="relative text-center">
@@ -64,6 +74,15 @@ function Home({ rooms }) {
                                 <a href="/profiles/create">Post My Profile</a>
                             </Button>
                         </div>
+                         <form className="flex items-center mt-4" onSubmit={handleSearch}>
+                            <input
+                                type="text"
+                                placeholder="Search for places..."
+                                className="w-full px-4 py-3 bg-white rounded-[200px] focus:outline-none focus:ring-2 focus:ring-gray-600"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </form>
                     </div>
                 </div>
             )}

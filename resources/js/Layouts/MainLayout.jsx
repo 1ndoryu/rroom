@@ -12,22 +12,8 @@ import MessageModal from '@/Components/MessageModal';
 function AuthNavbar({ user }) {
     const userName = user?.name || '';
     const initials = userName.substring(0, 2).toUpperCase();
-    const [searchTerm, setSearchTerm] = useState('');
-    const [isSearchOpen, setSearchOpen] = useState(false);
     const [isMessagesOpen, setMessagesOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
-
-    const handleSearch = (event) => {
-        event.preventDefault();
-        console.log('AuthNavbar:handleSearch - Término:', searchTerm);
-        router.visit(`/content?search=${searchTerm}`);
-    };
-
-    const handleSearchClose = () => {
-        setSearchOpen(!isSearchOpen);
-        console.log('AuthNavbar:handleSearchClose - Estado de búsqueda:', isSearchOpen);
-        setSearchTerm('');
-    };
 
     const toggleMessages = () => {
         setMessagesOpen(!isMessagesOpen);
@@ -50,36 +36,7 @@ function AuthNavbar({ user }) {
                     Explorer
                 </Button>
             </div>
-            <div id="sr" className="absolute z-50 w-full max-w-md -translate-x-1/2 top-3 left-1/2">
-                <form className="relative flex items-center" onSubmit={handleSearch}>
-                    <input
-                        type="text"
-                        placeholder="Search rooms, roommates..."
-                        className="w-full px-3 py-1 text-sm bg-white border rounded-full focus:outline-none focus:ring-2 focus:ring-gray-400 max-[768px]:hidden"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                handleSearch(e);
-                            }
-                        }}
-                    />
-                    <div className="flex items-center justify-center w-full min-[768px]:hidden">
-                        <input
-                            type="text"
-                            placeholder="Search rooms, roommates..."
-                            className={`search-cn ${isSearchOpen ? 'search-cn-open' : ''} w-[85%] px-3 py-1 text-sm bg-white border rounded-full focus:outline-none focus:ring-2 focus:ring-gray-400 min-[768px]:hidden`}
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    handleSearch(e);
-                                }
-                            }}
-                        />
-                    </div>
-                </form>
-            </div>
+            {/* Eliminado el bloque de búsqueda de aquí */}
 
             <div className="flex items-center justify-between w-full">
                 <div></div>
@@ -91,11 +48,6 @@ function AuthNavbar({ user }) {
                         <Button variant="ghost" size="icon" onClick={toggleMessages}>
                             <i className="fa-regular fa-comment"></i>
                         </Button>
-                        <span className="max-[768px]:block min-[768px]:hidden" onClick={handleSearchClose}>
-                            <Button variant="ghost" size="icon">
-                                <i className="fa-solid fa-magnifying-glass"></i>
-                            </Button>
-                        </span>
                     </div>
                     <div className="flex items-center">
                         <Avatar>

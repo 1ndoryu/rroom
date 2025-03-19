@@ -19,8 +19,6 @@
 [x] Poder eliminar rooms
 [x] Poder editar rooms
 
-# Bug
-[x] El estado de las ciudades no se mantiene en el modal
 
 # Front
 [ ] Arreglar imagen de perfil en el formulario de creacion
