@@ -22,7 +22,6 @@ class ContentController extends Controller
         $filterMinPrice = $request->input('minPrice', 0);
         $filterMaxPrice = $request->input('maxPrice', 0);
 
-
         $roomsData = collect();
         $profilesData = collect();
 
@@ -42,13 +41,19 @@ class ContentController extends Controller
                 });
             }
 
-            // Gender filter for rooms
+            // Gender filter for rooms (ajustando para que coincida con 'males' y 'females')
             if ($filterGender !== 'All') {
-                $roomsQuery->where('preferred_gender', $filterGender);
+                $filterGenderAdjusted = $filterGender;
+                if (strtolower($filterGender) === 'male') {
+                    $filterGenderAdjusted = 'males';
+                } elseif (strtolower($filterGender) === 'female') {
+                    $filterGenderAdjusted = 'females';
+                }
+                $roomsQuery->where('preferred_gender', $filterGenderAdjusted);
             }
 
             // City filter for rooms
-             if (!empty($filterCities)) {
+            if (!empty($filterCities)) {
                 $roomsQuery->where(function ($query) use ($filterCities) {
                     foreach ($filterCities as $city) {
                         $query->orWhere('city', 'ILIKE', '%' . $city . '%');
@@ -68,19 +73,19 @@ class ContentController extends Controller
             $roomsData = $rooms->map(function ($room) {
                 Log::info("ContentController:index: City of Room: " . $room->city);
                 return [
-                    'id'              => $room->id,
-                    'user'            => [
+                    'id'               => $room->id,
+                    'user'             => [
                         'id'   => $room->user->id,
                         'name' => $room->user->name,
                     ],
-                    'imageUrls'       => $room->images->map(fn($image) => $image->url)->toArray(),
-                    'address'         => $room->address,
-                    'rent'            => $room->rent,
-                    'city'            => $room->city,
+                    'imageUrls'        => $room->images->map(fn($image) => $image->url)->toArray(),
+                    'address'          => $room->address,
+                    'rent'             => $room->rent,
+                    'city'             => $room->city,
                     'preferred_gender' => $room->preferred_gender,
-                    'description'     => $room->description,
-                    'type'            => 'room',
-                    'created_at'      => $room->created_at,
+                    'description'      => $room->description,
+                    'type'             => 'room',
+                    'created_at'       => $room->created_at,
                 ];
             });
         }
@@ -103,11 +108,11 @@ class ContentController extends Controller
 
             // Gender filter for profiles
             if ($filterGender !== 'All') {
-               $profilesQuery->where('gender', $filterGender);
+                $profilesQuery->where('gender', $filterGender);
             }
 
             // City filter for profiles
-             if (!empty($filterCities)) {
+            if (!empty($filterCities)) {
                 $profilesQuery->where(function ($query) use ($filterCities) {
                     foreach ($filterCities as $city) {
                         $query->orWhere('looking_in', 'ILIKE', '%' . $city . '%');
@@ -149,17 +154,17 @@ class ContentController extends Controller
         $combinedData = $roomsData->concat($profilesData)->sortByDesc('created_at')->values()->all();
 
         return Inertia::render('Content/Index', [
-            'content'        => $combinedData,
-            'searchTerm'     => $searchTerm,
-            'filterCategory' => $filterCategory,
-            'filterGender'   => $filterGender,
+            'content'         => $combinedData,
+            'searchTerm'      => $searchTerm,
+            'filterCategory'  => $filterCategory,
+            'filterGender'    => $filterGender,
             'filterCities'    => $filterCities,
             'filterMinPrice'  => $filterMinPrice,
             'filterMaxPrice'  => $filterMaxPrice
         ]);
     }
 
-     public function show($type, $id)
+    public function show($type, $id)
     {
         if ($type !== 'room' && $type !== 'profile') {
             abort(404);
@@ -169,80 +174,78 @@ class ContentController extends Controller
             $room = Room::with(['user', 'images'])->findOrFail($id);
 
             $item = [
-                'id'              => $room->id,
-                'address'         => $room->address,
-                'hide_address'    => $room->hide_address,
-                'property_type'   => $room->property_type,
-                'rent'            => $room->rent,
-                'bills_included'  => $room->bills_included,
-                'security_deposit' => $room->security_deposit,
-                'available_on'    => $room->available_on,
-                'preferred_gender' => $room->preferred_gender,
-                'bathroom_type'   => $room->bathroom_type,
-                'parking'         => $room->parking,
-                'internet_access' => $room->internet_access,
-                'private_room'    => $room->private_room,
-                'furnished'       => $room->furnished,
-                'accessible'      => $room->accessible,
-                'lgbt_friendly'   => $room->lgbt_friendly,
-                'cannabis_friendly' => $room->cannabis_friendly,
-                'cat_friendly'    => $room->cat_friendly,
-                'dog_friendly'    => $room->dog_friendly,
-                'children_friendly' => $room->children_friendly,
-                'student_friendly' => $room->student_friendly,
-                'senior_friendly' => $room->senior_friendly,
+                'id'                    => $room->id,
+                'address'               => $room->address,
+                'hide_address'          => $room->hide_address,
+                'property_type'         => $room->property_type,
+                'rent'                  => $room->rent,
+                'bills_included'        => $room->bills_included,
+                'security_deposit'      => $room->security_deposit,
+                'available_on'          => $room->available_on,
+                'preferred_gender'      => $room->preferred_gender,
+                'bathroom_type'         => $room->bathroom_type,
+                'parking'               => $room->parking,
+                'internet_access'       => $room->internet_access,
+                'private_room'          => $room->private_room,
+                'furnished'             => $room->furnished,
+                'accessible'            => $room->accessible,
+                'lgbt_friendly'         => $room->lgbt_friendly,
+                'cannabis_friendly'     => $room->cannabis_friendly,
+                'cat_friendly'          => $room->cat_friendly,
+                'dog_friendly'          => $room->dog_friendly,
+                'children_friendly'     => $room->children_friendly,
+                'student_friendly'      => $room->student_friendly,
+                'senior_friendly'       => $room->senior_friendly,
                 'requires_background_check' => $room->requires_background_check,
-                'description'     => $room->description,
-                'roomies_description' => $room->roomies_description,
-                'bedrooms'        => $room->bedrooms,
-                'bathrooms'       => $room->bathrooms,
-                'roomies'         => $room->roomies,
-                'minimum_stay'    => $room->minimum_stay,
-                'maximum_stay'    => $room->maximum_stay,
-                'user'            => [
+                'description'           => $room->description,
+                'roomies_description'   => $room->roomies_description,
+                'bedrooms'              => $room->bedrooms,
+                'bathrooms'             => $room->bathrooms,
+                'roomies'               => $room->roomies,
+                'minimum_stay'          => $room->minimum_stay,
+                'maximum_stay'          => $room->maximum_stay,
+                'user'                  => [
                     'id'   => $room->user->id,
                     'name' => $room->user->name,
                 ],
-                'imageUrls'       => $room->images->map(fn($image) => $image->url)->toArray(),
-                'created_at'      => $room->created_at,
-                'updated_at'      => $room->updated_at,
-                'type'            => 'room',
-                'city'            => $room->city,
+                'imageUrls'             => $room->images->map(fn($image) => $image->url)->toArray(),
+                'created_at'            => $room->created_at,
+                'updated_at'            => $room->updated_at,
+                'type'                  => 'room',
+                'city'                  => $room->city,
             ];
-
-        }
-        elseif ($type === 'profile') {
+        } elseif ($type === 'profile') {
             $profile = UserProfile::with('user')->findOrFail($id);
 
             $item = [
-                'id'             => $profile->id,
-                'user'           => [
+                'id'                    => $profile->id,
+                'user'                  => [
                     'id'   => $profile->user->id,
                     'name' => $profile->user->name,
                 ],
-                'profile_image'  => $profile->profile_image ? Storage::url($profile->profile_image) : null,
-                'name'           => $profile->name,
-                'budget'         => $profile->budget,
-                'age'            => $profile->age,
-                'gender'         => $profile->gender,
-                'short_description' => $profile->short_description,
-                'can_be_contacted' => $profile->can_be_contacted,
-                'team_up'        => $profile->team_up,
-                'looking_in'     => $profile->looking_in,
-                'accommodation_for' => $profile->accommodation_for,
-                'ready_to_move'  => $profile->ready_to_move,
-                'description'    => $profile->description,
-                'phone_number'   => $profile->phone_number,
-                'phone_number_public' => $profile->phone_number_public,
-                'lgbt_friendly'  => $profile->lgbt_friendly,
-                'cannabis_friendly' => $profile->cannabis_friendly,
-                'cat_friendly'   => $profile->cat_friendly,
-                'dog_friendly'   => $profile->dog_friendly,
-                'children_friendly' => $profile->children_friendly,
-                'student_friendly' => $profile->student_friendly,
-                'senior_friendly' => $profile->senior_friendly,
+                'profile_image'         => $profile->profile_image ? Storage::url($profile->profile_image) : null,
+                'name'                  => $profile->name,
+                'budget'                => $profile->budget,
+                'age'                   => $profile->age,
+                'gender'                => $profile->gender,
+                'short_description'     => $profile->short_description,
+                'can_be_contacted'      => $profile->can_be_contacted,
+                'team_up'               => $profile->team_up,
+                'looking_in'            => $profile->looking_in,
+                'accommodation_for'     => $profile->accommodation_for,
+                'ready_to_move'         => $profile->ready_to_move,
+                'description'           => $profile->description,
+                'phone_number'          => $profile->phone_number,
+                'phone_number_public'   => $profile->phone_number_public,
+                'lgbt_friendly'         => $profile->lgbt_friendly,
+                'cannabis_friendly'     => $profile->cannabis_friendly,
+                'cat_friendly'          => $profile->cat_friendly,
+                'dog_friendly'          => $profile->dog_friendly,
+                'children_friendly'     => $profile->children_friendly,
+                'student_friendly'      => $profile->student_friendly,
+                'senior_friendly'       => $profile->senior_friendly,
                 'requires_background_check' => $profile->requires_background_check,
-                'type'           => 'profile',
+                'type'                  => 'profile',
             ];
         }
 
