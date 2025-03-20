@@ -17,21 +17,33 @@ const DROPDOWN_CATEGORIES = [
     { id: 3, name: 'Women', value: 'female' },
 ];
 
+const TYPES_ALIST = [
+    { id: 1, name: 'Recents', value: 'recents' },
+    { id: 2, name: 'Revelant', value: 'relevant' },
+];
+
 const MARGIN_BELOW_BUTTON = 8;
 
 function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory: initialFilterCategory, filterGender: initialFilterGender, filterCities: initialFilterCities, filterMinPrice: initialFilterMinPrice, filterMaxPrice: initialFilterMaxPrice }) {
     const [activeCategory, setActiveCategory] = useState(initialFilterCategory || 'All Listing');
     const [searchTerm, setSearchTerm] = useState(initialSearchTerm || '');
     const { props } = usePage();
+
+    // Estados de los filtros 
     const [isOpen, setIsOpen] = useState(false);
+    const [isOpenAlist, setIsOpenAlist] = useState(false);
+
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, position: 'below' });
     const triggerRef = useRef(null);
+    const triggerRefAlist = useRef(null);
     const dropdownRef = useRef(null);
+    const dropdownRefAlist = useRef(null);
     const minInputRef = useRef(null);
     const maxInputRef = useRef(null);
 
     const [selectedGender, setSelectedGender] = useState(initialFilterGender || 'All');
     const [selectedCities, setSelectedCities] = useState(initialFilterCities || []);
+    const [selectedTypeAlist, setSelectedTypeAlist] = useState('recents');	
     const [priceRange, setPriceRange] = useState({ min: initialFilterMinPrice || 0, max: initialFilterMaxPrice || 0 });
 
     const [showModal, setShowModal] = useState(false);
@@ -105,7 +117,9 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
         }
     };
 
+
     const toggleDropdown = () => setIsOpen(!isOpen);
+    const toggleDropDownAlist = () => setIsOpenAlist(!isOpenAlist);
 
     useEffect(() => {
         const handleResizeAndScroll = () => {
@@ -113,7 +127,7 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
                 calculateDropdownPosition();
             }
         };
-
+        
         if (isOpen) {
             calculateDropdownPosition();
             window.addEventListener('resize', handleResizeAndScroll);
@@ -138,6 +152,12 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
             minPrice: priceRange.min,
             maxPrice: priceRange.max,
         }, { preserveState: true, preserveScroll: true });
+    };
+
+    const handleOptionClickAlist = (value) => {
+        // Por el momento dejarlo sin la logica solo cerrar el modal y guardar el tipo de ordenamiento elegido.
+        setIsOpenAlist(false)
+        setSelectedTypeAlist(value);
     };
 
     const handleCityChange = (selectedOptions) => {
@@ -219,17 +239,47 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
             </div>
 
             <div className="filter-dropdown-container">
+                <div className="filter-gender-trigger" onClick={toggleDropDownAlist} ref={triggerRefAlist}>
+                    <p className="filter-gender-text">
+                        {selectedTypeAlist === 'recents' ? 'Recents' : 'Revelant'}
+                    </p>
+                </div>
+
                 <div className="filter-gender-trigger" onClick={toggleDropdown} ref={triggerRef}>
                     <p className="filter-gender-text">
                         {selectedGender === 'All' ? 'Gender' : (selectedGender === 'male' ? 'Men' : 'Women')}
                     </p>
                 </div>
 
+
                 <Button variant="primary" onClick={handleShowModal} style={{ marginLeft: '10px' }}>
                     <i className="fa-regular fa-filter"></i>
                 </Button>
 
                 {isOpen && (
+                    <div
+                        ref={dropdownRefAlist}
+                        className="filter-gender-dropdown"
+                        style={{
+                            top: dropdownPosition.top,
+                            left: dropdownPosition.left,
+                        }}
+                    >
+                        <div className="filter-gender-options">
+                            {DROPDOWN_CATEGORIES.map((alist) => (
+                                <button
+                                    key={alist.id}
+                                    className="filter-gender-option"
+                                    onClick={() => handleOptionClickAlist(alist.value)}
+                                >
+                                    {alist.name}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {isOpenAlist && (
                     <div
                         ref={dropdownRef}
                         className="filter-gender-dropdown"
@@ -239,7 +289,7 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
                         }}
                     >
                         <div className="filter-gender-options">
-                            {DROPDOWN_CATEGORIES.map((category) => (
+                            {TYPES_ALIST.map((category) => (
                                 <button
                                     key={category.id}
                                     className="filter-gender-option"

@@ -14,6 +14,7 @@ function AuthNavbar({ user }) {
     const initials = userName.substring(0, 2).toUpperCase();
     const [isMessagesOpen, setMessagesOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [isNavOpen, setIsNavOpen] = useState(false);
 
     const toggleMessages = () => {
         setMessagesOpen(!isMessagesOpen);
@@ -28,7 +29,8 @@ function AuthNavbar({ user }) {
 
     return (
         <div className="flex items-stretch justify-between w-full">
-            <div className="flex items-center ml-auto mb-[-4px] p-1 space-x-0">
+
+            <div className="flex justify-center items-center max-[768px]:hidden">
                 <Button className="border-none hover:bg-transparent" variant="outline" onClick={() => router.visit('/myrooms')}>
                     My rooms
                 </Button>
@@ -36,11 +38,14 @@ function AuthNavbar({ user }) {
                     Explorer
                 </Button>
             </div>
+
+            
             {/* Eliminado el bloque de búsqueda de aquí */}
 
             <div className="flex items-center justify-between w-full">
                 <div></div>
-                <div className="flex items-center gap-5">
+
+                <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
                         <Button variant="ghost" size="icon">
                             <i className="fa-regular fa-bell"></i>
@@ -55,6 +60,12 @@ function AuthNavbar({ user }) {
                             <AvatarFallback>{initials}</AvatarFallback>
                         </Avatar>
                     </div>
+
+                    <div className='min-[768px]:hidden menu-bars' onClick={() => {setIsNavOpen(!isNavOpen)}}>
+                        <span className={`menu-bar__1 ${isNavOpen ? 'active' : ''}`}></span>
+                        <span className={`menu-bar__2 ${isNavOpen ? 'active' : ''}`}></span>
+                        <span className={`menu-bar__3 ${isNavOpen ? 'active' : ''}`}></span>
+                    </div>
                 </div>
                 {/* Modal de la lista de mensajes */}
                 {isMessagesOpen && (
@@ -68,6 +79,17 @@ function AuthNavbar({ user }) {
                         onClose={() => setSelectedUser(null)}
                     />
                 )}
+            </div>
+
+            <div className={`content-menu ${isNavOpen ? 'active' : ''}`}>
+                <div className='flex flex-col gap-2'>
+                    <Button variant="outline" onClick={() => router.visit('/myrooms')}>
+                        My rooms
+                    </Button>
+                    <Button variant="outline" onClick={() => router.visit('/content')}>
+                        Explorer
+                    </Button>
+                </div>
             </div>
         </div>
     );
@@ -96,7 +118,7 @@ export default function MainLayout({ children, auth }) {
             </Head>
             <div className={containerClasses}>
                 <nav className="w-full bg-white border-b border-gray-200 h-14">
-                    <div className="container flex items-stretch h-full px-4 mx-auto">
+                    <div className="container flex items-stretch h-full px-4 mx-auto relative">
                         <div className="flex items-center">
                             <Link href="/" className="text-xl font-bold">
                                 Room
