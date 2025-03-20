@@ -11,13 +11,13 @@ const CATEGORIES = [
     { id: 4, name: 'PG', icon: 'fa-building' },
 ];
 
-const DROPDOWN_CATEGORIES = [
+const GENDER_OPTIONS = [
     { id: 1, name: 'All', value: 'All' },
     { id: 2, name: 'Men', value: 'male' },
     { id: 3, name: 'Women', value: 'female' },
 ];
 
-const TYPES_ALIST = [
+const SORT_OPTIONS = [
     { id: 1, name: 'Recents', value: 'recents' },
     { id: 2, name: 'Revelant', value: 'relevant' },
 ];
@@ -29,29 +29,31 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
     const [searchTerm, setSearchTerm] = useState(initialSearchTerm || '');
     const { props } = usePage();
 
-    // Estados de los filtros 
-    const [isOpen, setIsOpen] = useState(false);
-    const [isOpenAlist, setIsOpenAlist] = useState(false);
+    const [isGenderOpen, setIsGenderOpen] = useState(false);
+    const [isSortOpen, setIsSortOpen] = useState(false);
 
-    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, position: 'below' });
-    const triggerRef = useRef(null);
-    const triggerRefAlist = useRef(null);
-    const dropdownRef = useRef(null);
-    const dropdownRefAlist = useRef(null);
+    const [genderDropdownPosition, setGenderDropdownPosition] = useState({ top: 0, left: 0 });
+    const [sortDropdownPosition, setSortDropdownPosition] = useState({ top: 0, left: 0 });
+
+    const genderTriggerRef = useRef(null);
+    const sortTriggerRef = useRef(null);
+    const genderDropdownRef = useRef(null);
+    const sortDropdownRef = useRef(null);
+
     const minInputRef = useRef(null);
     const maxInputRef = useRef(null);
 
     const [selectedGender, setSelectedGender] = useState(initialFilterGender || 'All');
     const [selectedCities, setSelectedCities] = useState(initialFilterCities || []);
-    const [selectedTypeAlist, setSelectedTypeAlist] = useState('recents');	
+    const [selectedSort, setSelectedSort] = useState('recents');
     const [priceRange, setPriceRange] = useState({ min: initialFilterMinPrice || 0, max: initialFilterMaxPrice || 0 });
-
     const [showModal, setShowModal] = useState(false);
 
     const [tempSelectedCities, setTempSelectedCities] = useState(initialFilterCities || []);
     const [tempPriceRange, setTempPriceRange] = useState({ min: initialFilterMinPrice || 0, max: initialFilterMaxPrice || 0 });
     const [tempSelectedGender, setTempSelectedGender] = useState(initialFilterGender || 'All');
     const [tempActiveCategory, setTempActiveCategory] = useState(initialFilterCategory || 'All Listing');
+
 
     const handleShowModal = () => {
         setTempSelectedCities(selectedCities);
@@ -61,9 +63,7 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
         setShowModal(true);
     };
 
-    const handleCloseModal = () => {
-        setShowModal(false);
-    };
+    const handleCloseModal = () => setShowModal(false);
 
     const handleFilterChange = (category, gender, cities, priceRange) => {
         const params = {
@@ -77,9 +77,7 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
         router.get(route('content.index'), params, {
             preserveState: true,
             preserveScroll: true,
-            onSuccess: () => {
-                handleCloseModal();
-            }
+            onSuccess: () => handleCloseModal(),
         });
     };
 
@@ -88,20 +86,18 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
         setSelectedGender(initialFilterGender || 'All');
         setSelectedCities(initialFilterCities || []);
         setPriceRange({ min: initialFilterMinPrice || 0, max: initialFilterMaxPrice || 0 });
-
         setTempSelectedCities(initialFilterCities || []);
         setTempPriceRange({ min: initialFilterMinPrice || 0, max: initialFilterMaxPrice || 0 });
         setTempSelectedGender(initialFilterGender || 'All');
         setTempActiveCategory(initialFilterCategory || 'All Listing');
     }, [initialFilterCategory, initialFilterGender, initialFilterCities, initialFilterMinPrice, initialFilterMaxPrice, props]);
 
-    const calculateDropdownPosition = () => {
+    const calculateDropdownPosition = (triggerRef, dropdownRef, setPosition) => {
         if (triggerRef.current && dropdownRef.current) {
             const triggerRect = triggerRef.current.getBoundingClientRect();
             const dropdownRect = dropdownRef.current.getBoundingClientRect();
             const spaceBelow = window.innerHeight - triggerRect.bottom;
             const dropdownHeight = dropdownRect.height;
-
             const position = spaceBelow >= dropdownHeight + MARGIN_BELOW_BUTTON ? 'below' : 'above';
             let top, left;
 
@@ -113,23 +109,48 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
 
             left = triggerRect.left + (triggerRect.width / 2) - (dropdownRect.width / 2);
             left = Math.max(10, Math.min(left, window.innerWidth - dropdownRect.width - 20));
-            setDropdownPosition({ top, left, position });
+            setPosition({ top, left });
         }
     };
 
+    const toggleGenderDropdown = () => {
+        setIsGenderOpen(!isGenderOpen);
+        if (!isGenderOpen) {
+            setIsSortOpen(false);
+        }
+    };
 
-    const toggleDropdown = () => setIsOpen(!isOpen);
-    const toggleDropDownAlist = () => setIsOpenAlist(!isOpenAlist);
+    const toggleSortDropdown = () => {
+        setIsSortOpen(!isSortOpen);
+        if (!isSortOpen) {
+            setIsGenderOpen(false);
+        }
+    };
+
+      useEffect(() => {
+        if (isGenderOpen) {
+            calculateDropdownPosition(genderTriggerRef, genderDropdownRef, setGenderDropdownPosition);
+        }
+    }, [isGenderOpen]);
+
+    useEffect(() => {
+        if (isSortOpen) {
+            calculateDropdownPosition(sortTriggerRef, sortDropdownRef, setSortDropdownPosition);
+        }
+    }, [isSortOpen]);
+
 
     useEffect(() => {
         const handleResizeAndScroll = () => {
-            if (isOpen) {
-                calculateDropdownPosition();
+            if (isGenderOpen) {
+                calculateDropdownPosition(genderTriggerRef, genderDropdownRef, setGenderDropdownPosition);
+            }
+            if (isSortOpen) {
+                calculateDropdownPosition(sortTriggerRef, sortDropdownRef, setSortDropdownPosition);
             }
         };
-        
-        if (isOpen) {
-            calculateDropdownPosition();
+
+        if (isGenderOpen || isSortOpen) {
             window.addEventListener('resize', handleResizeAndScroll);
             window.addEventListener('scroll', handleResizeAndScroll);
         }
@@ -138,13 +159,27 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
             window.removeEventListener('resize', handleResizeAndScroll);
             window.removeEventListener('scroll', handleResizeAndScroll);
         };
-    }, [isOpen]);
+    }, [isGenderOpen, isSortOpen]);
 
-    // Al seleccionar una opción de género se actualiza inmediatamente
-    const handleOptionClick = (value) => {
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (genderDropdownRef.current && !genderDropdownRef.current.contains(event.target) && !genderTriggerRef.current.contains(event.target)) {
+                setIsGenderOpen(false);
+            }
+            if (sortDropdownRef.current && !sortDropdownRef.current.contains(event.target) && !sortTriggerRef.current.contains(event.target)) {
+                setIsSortOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+
+    const handleGenderOptionClick = (value) => {
         setSelectedGender(value);
         setTempSelectedGender(value);
-        setIsOpen(false);
+        setIsGenderOpen(false);
         router.get(route('content.index'), {
             filterCategory: activeCategory,
             filterGender: value,
@@ -154,21 +189,14 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
         }, { preserveState: true, preserveScroll: true });
     };
 
-    const handleOptionClickAlist = (value) => {
-        // Por el momento dejarlo sin la logica solo cerrar el modal y guardar el tipo de ordenamiento elegido.
-        setIsOpenAlist(false)
-        setSelectedTypeAlist(value);
+    const handleSortOptionClick = (value) => {
+        setSelectedSort(value);
+        setIsSortOpen(false);
     };
 
-    const handleCityChange = (selectedOptions) => {
-        setTempSelectedCities(selectedOptions);
-    };
+    const handleCityChange = (selectedOptions) => setTempSelectedCities(selectedOptions);
+    const handlePriceChange = (newPriceRange) => setTempPriceRange(newPriceRange);
 
-    const handlePriceChange = (newPriceRange) => {
-        setTempPriceRange(newPriceRange);
-    };
-
-    // Al hacer click en una categoría (por ejemplo: Rooms, Roommates) se dispara la consulta
     const handleCategoryClick = (categoryName) => {
         setActiveCategory(categoryName);
         setTempActiveCategory(categoryName);
@@ -239,13 +267,14 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
             </div>
 
             <div className="filter-dropdown-container">
-                <div className="filter-gender-trigger" onClick={toggleDropDownAlist} ref={triggerRefAlist}>
+
+                <div className="filter-gender-trigger" onClick={toggleSortDropdown} ref={sortTriggerRef}>
                     <p className="filter-gender-text">
-                        {selectedTypeAlist === 'recents' ? 'Recents' : 'Revelant'}
+                        {selectedSort === 'recents' ? 'Recents' : 'Revelant'}
                     </p>
                 </div>
 
-                <div className="filter-gender-trigger" onClick={toggleDropdown} ref={triggerRef}>
+                <div className="filter-gender-trigger" onClick={toggleGenderDropdown} ref={genderTriggerRef}>
                     <p className="filter-gender-text">
                         {selectedGender === 'All' ? 'Gender' : (selectedGender === 'male' ? 'Men' : 'Women')}
                     </p>
@@ -256,46 +285,47 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
                     <i className="fa-regular fa-filter"></i>
                 </Button>
 
-                {isOpen && (
+
+                {isSortOpen && (
                     <div
-                        ref={dropdownRefAlist}
+                        ref={sortDropdownRef}
                         className="filter-gender-dropdown"
                         style={{
-                            top: dropdownPosition.top,
-                            left: dropdownPosition.left,
+                            top: sortDropdownPosition.top,
+                            left: sortDropdownPosition.left,
                         }}
                     >
                         <div className="filter-gender-options">
-                            {DROPDOWN_CATEGORIES.map((alist) => (
+                            {SORT_OPTIONS.map((option) => (
                                 <button
-                                    key={alist.id}
+                                    key={option.id}
                                     className="filter-gender-option"
-                                    onClick={() => handleOptionClickAlist(alist.value)}
+                                    onClick={() => handleSortOptionClick(option.value)}
                                 >
-                                    {alist.name}
+                                    {option.name}
                                 </button>
                             ))}
                         </div>
                     </div>
                 )}
 
-                {isOpenAlist && (
+                {isGenderOpen && (
                     <div
-                        ref={dropdownRef}
+                        ref={genderDropdownRef}
                         className="filter-gender-dropdown"
                         style={{
-                            top: dropdownPosition.top,
-                            left: dropdownPosition.left,
+                            top: genderDropdownPosition.top,
+                            left: genderDropdownPosition.left,
                         }}
                     >
                         <div className="filter-gender-options">
-                            {TYPES_ALIST.map((category) => (
+                            {GENDER_OPTIONS.map((option) => (
                                 <button
-                                    key={category.id}
+                                    key={option.id}
                                     className="filter-gender-option"
-                                    onClick={() => handleOptionClick(category.value)}
+                                    onClick={() => handleGenderOptionClick(option.value)}
                                 >
-                                    {category.name}
+                                    {option.name}
                                 </button>
                             ))}
                         </div>
@@ -303,13 +333,11 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
                 )}
             </div>
 
-            {/* Modal */}
             <Modal show={showModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Filter Options</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {/* City Selection */}
                     <div className="filter-modal-section">
                         <label>Select Cities:</label>
                         <CityFilterInput
@@ -319,7 +347,6 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
                         />
                     </div>
 
-                    {/* Price Range Selection */}
                     <div className="filter-modal-section">
                         <label>Price Range:</label>
                         <div className="filter-price-container">

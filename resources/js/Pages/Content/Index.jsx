@@ -30,7 +30,7 @@ export default function Index({ content, filterGender, filterCities, filterMinPr
             <Head title="Content List" />
 
             {/* Barra de Búsqueda */}
-            <form onSubmit={handleSearch} className="flex items-center w-full max-w-md mx-auto mt-4 mb-4">
+            <form onSubmit={handleSearch} className="flex items-center w-full max-w-md mx-auto mt-0 mb-4">
                 <input
                     type="text"
                     placeholder="Search rooms, roommates..."
