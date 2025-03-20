@@ -12,6 +12,7 @@
     gap: 10px;
     margin-bottom: 10px;
     margin-right: auto;
+    flex-wrap: wrap;
 }
 
 .filter-category-item {
@@ -26,6 +27,7 @@
         border-color 0.2s;
 }
 
+
 .filter-category-item:hover {
     background-color: #f0f0f0;
 }
@@ -35,7 +37,15 @@
     border-color: #91d5ff;
 }
 
-.filter-icon {
+@media (max-width: 768px) {
+    .filter-category-item {
+        padding: .4rem .8rem;
+    }
+
+    .search-custom-filter {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+    }
 }
 
 .filter-category-name {
