@@ -5,25 +5,8 @@ import './SearchWithCustomFilter.css';
 import { Modal, Button } from 'react-bootstrap';
 import CityFilterInput from '@/Components/CityFilterInput';
 
-const CATEGORIES = [
-    { id: 1, name: 'All Listing', icon: 'fa-border-all' },
-    { id: 2, name: 'Rooms', icon: 'fa-bed-front' },
-    { id: 3, name: 'Roommates', icon: 'fa-user-group-simple' },
-    { id: 4, name: 'PG', icon: 'fa-building' },
-];
-
-const GENDER_OPTIONS = [
-    { id: 1, name: 'All', value: 'All' },
-    { id: 2, name: 'Men', value: 'male' },
-    { id: 3, name: 'Women', value: 'female' },
-];
-
-const SORT_OPTIONS = [
-    { id: 1, name: 'Recents', value: 'recents' },
-    { id: 2, name: 'Revelant', value: 'relevant' },
-];
-
-const MARGIN_BELOW_BUTTON = 8;
+// Import de los objects usados
+import { CATEGORIES, GENDER_OPTIONS, SORT_OPTIONS, MARGIN_BELOW_BUTTON } from '../options/options.room';
 
 function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory: initialFilterCategory, filterGender: initialFilterGender, filterCities: initialFilterCities, filterMinPrice: initialFilterMinPrice, filterMaxPrice: initialFilterMaxPrice, selectedSort: initialSelectedSort }) { // Recibe selectedSort
     const [activeCategory, setActiveCategory] = useState(initialFilterCategory || 'All Listing');

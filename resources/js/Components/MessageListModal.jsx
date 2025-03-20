@@ -57,7 +57,7 @@ function MessageListModal({ onClose, onSelectUser }) {
                 <div className="p-3 bg-grey" style={{ maxHeight: '300px', overflowY: 'auto' }}>
                     {loading ? (
                         <div className="flex items-center justify-center h-full">
-                            <div className="w-16 h-16 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+                            <div className="w-[30px] h-[30px] border-[#252525] border-[2px] border-t-transparent border-r-transparent animate-[spin_0.8s_linear_infinite] rounded-[50%]"></div>
                         </div>
                     ) : (
                         users.length > 0 ? (
