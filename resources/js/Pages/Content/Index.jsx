@@ -3,34 +3,28 @@ import { Head, usePage, router } from '@inertiajs/react';
 import MainLayout from '@/Layouts/MainLayout';
 import ContentCard from '@/Components/ContentCard';
 import SearchWithCustomFilter from './components/SearchWithCustomFilter';
-import { useState, useEffect } from 'react'; // Importa useState y useEffect
+import { useState, useEffect } from 'react';
 
-export default function Index({ content, filterGender, filterCities, filterMinPrice, filterMaxPrice }) {
+export default function Index({ content, filterGender, filterCities, filterMinPrice, filterMaxPrice, selectedSort }) { // Recibir selectedSort
     const { auth, searchTerm: initialSearchTerm, filterCategory } = usePage().props;
-    const [searchTerm, setSearchTerm] = useState(initialSearchTerm || ''); // Inicializa con el searchTerm de las props, o vacío
-
-    console.log("Index - Props Received:", { content, filterGender, filterCities, filterMinPrice, filterMaxPrice, auth, searchTerm, filterCategory });
+    const [searchTerm, setSearchTerm] = useState(initialSearchTerm || '');
+    console.log("Index - Props Received:", { content, filterGender, filterCities, filterMinPrice, filterMaxPrice, selectedSort, auth, searchTerm, filterCategory }); //agrege selectedSort
 
     const handleSearch = (event) => {
         event.preventDefault();
-        // Construye la URL con todos los parámetros de filtro y búsqueda
-        const url = `/content?search=${searchTerm}&filterCategory=${filterCategory}&filterGender=${filterGender}&cities=${filterCities.join(',')}&minPrice=${filterMinPrice}&maxPrice=${filterMaxPrice}`;
+        const url = `/content?search=${searchTerm}&filterCategory=${filterCategory}&filterGender=${filterGender}&cities=${filterCities.join(',')}&minPrice=${filterMinPrice}&maxPrice=${filterMaxPrice}&selectedSort=${selectedSort}`; // Incluir selectedSort
         router.visit(url);
         console.log("Content:handleSearch - URL:", url);
-
     };
 
-     useEffect(() => {
+    useEffect(() => {
         setSearchTerm(initialSearchTerm || '');
     }, [initialSearchTerm]);
-
 
     return (
         <MainLayout auth={auth}>
             <Head title="Content List" />
-
-            {/* Barra de Búsqueda */}
-            <form onSubmit={handleSearch} className="flex items-center w-full max-w-md mx-auto mt-0 mb-4">
+            <form onSubmit={handleSearch} className="flex items-center w-full max-w-md mx-auto mt-0 mb-6">
                 <input
                     type="text"
                     placeholder="Search rooms, roommates..."
@@ -39,7 +33,6 @@ export default function Index({ content, filterGender, filterCities, filterMinPr
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </form>
-
             <SearchWithCustomFilter
                 searchTerm={searchTerm}
                 filterCategory={filterCategory}
@@ -47,8 +40,8 @@ export default function Index({ content, filterGender, filterCities, filterMinPr
                 filterCities={filterCities}
                 filterMinPrice={filterMinPrice}
                 filterMaxPrice={filterMaxPrice}
+                selectedSort={selectedSort} // Pasar selectedSort al componente
             />
-
             <div className="grid grid-cols-1 card-wrapper gap-7 my-7 md:grid-cols-2 lg:gap-10 lg:my-10">
                 {content?.map(item => (
                     <ContentCard key={`${item.type}-${item.id}`} item={item} />

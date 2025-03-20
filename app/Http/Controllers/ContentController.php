@@ -21,6 +21,7 @@ class ContentController extends Controller
         $filterCities = $request->input('cities', []);
         $filterMinPrice = $request->input('minPrice', 0);
         $filterMaxPrice = $request->input('maxPrice', 0);
+        $selectedSort = $request->input('selectedSort', 'recents'); // Nuevo: Obtener opción de ordenamiento
 
         $roomsData = collect();
         $profilesData = collect();
@@ -41,7 +42,7 @@ class ContentController extends Controller
                 });
             }
 
-            // Gender filter for rooms (ajustando para que coincida con 'males' y 'females')
+            // Gender filter for rooms
             if ($filterGender !== 'All') {
                 $filterGenderAdjusted = $filterGender;
                 if (strtolower($filterGender) === 'male') {
@@ -69,7 +70,15 @@ class ContentController extends Controller
                 $roomsQuery->where('rent', '<=', $filterMaxPrice);
             }
 
-            $rooms = $roomsQuery->latest()->get();
+             // Ordenamiento para cuartos
+            if ($selectedSort === 'recents') {
+                $roomsQuery->latest();
+            } elseif ($selectedSort === 'relevant') {
+                 // Preparación para la relevancia (aún no implementada)
+                $roomsQuery->orderBy('id', 'desc');  // Temporal, cambia esto luego
+            }
+
+            $rooms = $roomsQuery->get();
             $roomsData = $rooms->map(function ($room) {
                 Log::info("ContentController:index: City of Room: " . $room->city);
                 return [
@@ -127,7 +136,15 @@ class ContentController extends Controller
                 $profilesQuery->where('budget', '<=', $filterMaxPrice);
             }
 
-            $profiles = $profilesQuery->latest()->get();
+            // Ordenamiento para perfiles
+            if ($selectedSort === 'recents') {
+                $profilesQuery->latest();
+            } elseif ($selectedSort === 'relevant') {
+                 // Preparación para la relevancia (aún no implementada)
+                 $profilesQuery->orderBy('id', 'desc'); // Temporalmente, para que no de error.
+            }
+
+            $profiles = $profilesQuery->get();
             $profilesData = $profiles->map(function ($profile) {
                 Log::info("ContentController:index: City of Profile: " . $profile->looking_in);
                 return [
@@ -149,9 +166,16 @@ class ContentController extends Controller
             });
         }
 
-        // Combine and return results
-        Log::info("ContentController:index: Filter Behavior - Category: $filterCategory, Gender: $filterGender, Cities: " . json_encode($filterCities) . ", MinPrice: $filterMinPrice, MaxPrice: $filterMaxPrice");
-        $combinedData = $roomsData->concat($profilesData)->sortByDesc('created_at')->values()->all();
+        // Combinar y ordenar los resultados *después* de filtrar y mapear
+        $combinedData = $roomsData->concat($profilesData);
+
+        if ($selectedSort === 'recents') {
+            $combinedData = $combinedData->sortByDesc('created_at')->values()->all();
+        } elseif ($selectedSort === 'relevant') {
+             // Orden temporal mientras se implementa la relevancia
+             $combinedData = $combinedData->sortByDesc('id')->values()->all(); // Cambia esto
+        }
+
 
         return Inertia::render('Content/Index', [
             'content'         => $combinedData,
@@ -160,7 +184,8 @@ class ContentController extends Controller
             'filterGender'    => $filterGender,
             'filterCities'    => $filterCities,
             'filterMinPrice'  => $filterMinPrice,
-            'filterMaxPrice'  => $filterMaxPrice
+            'filterMaxPrice'  => $filterMaxPrice,
+            'selectedSort'   => $selectedSort, // Pasar la opción de ordenamiento a la vista
         ]);
     }
 

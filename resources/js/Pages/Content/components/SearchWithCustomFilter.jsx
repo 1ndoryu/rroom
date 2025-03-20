@@ -1,3 +1,4 @@
+// resources/js/Pages/Content/components/SearchWithCustomFilter.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import { router, usePage } from '@inertiajs/react';
 import './SearchWithCustomFilter.css';
@@ -24,7 +25,7 @@ const SORT_OPTIONS = [
 
 const MARGIN_BELOW_BUTTON = 8;
 
-function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory: initialFilterCategory, filterGender: initialFilterGender, filterCities: initialFilterCities, filterMinPrice: initialFilterMinPrice, filterMaxPrice: initialFilterMaxPrice }) {
+function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory: initialFilterCategory, filterGender: initialFilterGender, filterCities: initialFilterCities, filterMinPrice: initialFilterMinPrice, filterMaxPrice: initialFilterMaxPrice, selectedSort: initialSelectedSort }) { // Recibe selectedSort
     const [activeCategory, setActiveCategory] = useState(initialFilterCategory || 'All Listing');
     const [searchTerm, setSearchTerm] = useState(initialSearchTerm || '');
     const { props } = usePage();
@@ -45,7 +46,7 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
 
     const [selectedGender, setSelectedGender] = useState(initialFilterGender || 'All');
     const [selectedCities, setSelectedCities] = useState(initialFilterCities || []);
-    const [selectedSort, setSelectedSort] = useState('recents');
+    const [selectedSort, setSelectedSort] = useState(initialSelectedSort || 'recents'); // Inicializar con el valor de las props
     const [priceRange, setPriceRange] = useState({ min: initialFilterMinPrice || 0, max: initialFilterMaxPrice || 0 });
     const [showModal, setShowModal] = useState(false);
 
@@ -72,7 +73,9 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
             cities: cities.map(city => city.value),
             minPrice: priceRange.min,
             maxPrice: priceRange.max,
+            selectedSort: selectedSort, // Enviar selectedSort en la petición
         };
+        console.log("SearchWithCustomFilter:handleFilterChange - Params:", params);
 
         router.get(route('content.index'), params, {
             preserveState: true,
@@ -90,7 +93,8 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
         setTempPriceRange({ min: initialFilterMinPrice || 0, max: initialFilterMaxPrice || 0 });
         setTempSelectedGender(initialFilterGender || 'All');
         setTempActiveCategory(initialFilterCategory || 'All Listing');
-    }, [initialFilterCategory, initialFilterGender, initialFilterCities, initialFilterMinPrice, initialFilterMaxPrice, props]);
+        setSelectedSort(initialSelectedSort || 'recents'); // Asegurar que selectedSort se actualiza
+    }, [initialFilterCategory, initialFilterGender, initialFilterCities, initialFilterMinPrice, initialFilterMaxPrice, initialSelectedSort, props]);
 
     const calculateDropdownPosition = (triggerRef, dropdownRef, setPosition) => {
         if (triggerRef.current && dropdownRef.current) {
@@ -186,12 +190,21 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
             cities: selectedCities.map(city => city.value),
             minPrice: priceRange.min,
             maxPrice: priceRange.max,
+            selectedSort: selectedSort, // Enviar selectedSort
         }, { preserveState: true, preserveScroll: true });
     };
 
     const handleSortOptionClick = (value) => {
         setSelectedSort(value);
         setIsSortOpen(false);
+         router.get(route('content.index'), {
+            filterCategory: activeCategory,  // Mantener los otros filtros
+            filterGender: selectedGender,
+            cities: selectedCities.map(city => city.value),
+            minPrice: priceRange.min,
+            maxPrice: priceRange.max,
+            selectedSort: value, // Enviar la nueva opción de ordenamiento
+        }, { preserveState: true, preserveScroll: true });
     };
 
     const handleCityChange = (selectedOptions) => setTempSelectedCities(selectedOptions);
@@ -206,6 +219,8 @@ function SearchWithCustomFilter({ searchTerm: initialSearchTerm, filterCategory:
             cities: selectedCities.map(city => city.value),
             minPrice: priceRange.min,
             maxPrice: priceRange.max,
+            selectedSort: selectedSort, // Enviar selectedSort
+
         }, { preserveState: true, preserveScroll: true });
     };
 
