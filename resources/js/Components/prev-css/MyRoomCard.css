@@ -1,0 +1,40 @@
+/* Estilos base para el menú de opciones */
+
+.options-menu {
+    position: absolute;
+    top: 100%;
+    left: -270%; 
+    background-color: #f7f7f7;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 10;
+    width: 100px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+    border: 1px solid #dbdbdb;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Estilos base para el menú de opciones */
+
+/* Estilos para cuando el menú está activo (visible) */
+
+.options-menu.active {
+    opacity: 1;
+    pointer-events: auto;
+    transition: all 0.2s ease-in-out;
+}
+
+@media (max-width: 768px) {
+    .options-menu {
+        display: none;
+        pointer-events: none;
+    }
+}
+
+/* Estilos para cuando el menú está activo (visible) */
